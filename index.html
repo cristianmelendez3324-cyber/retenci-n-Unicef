@@ -858,62 +858,325 @@ function buscar() {
     if (!campoDonante || !res) return;
 
     var inputRaw = campoDonante.value || '';
-    if (inputRaw.trim().length === 0) {
-      res.innerHTML = '';
-      return;
-    }
+    if (inputRaw.trim().length === 0) { res.innerHTML = ''; return; }
 
     var input = normalizarTexto(inputRaw);
 
     // Detector de idioma
     mostrarDetectorIdioma(detectarIdioma(inputRaw));
 
-    // Construir lista de todas las causales
-    var todasCausales = DB.slice();
-    causales.forEach(function(c) {
-      var kwsRaw = normalizarTexto(c.frase || '').split(/\s+/).filter(function(w) { return w.length > 4; });
-      todasCausales.push({
-        id: 'custom-' + c.id,
-        emoji: c.emoji || '💬',
-        nombre: c.title || 'Personalizada',
-        nivel: 'amarillo', nivelIcon: '🟡', nivelLabel: 'Personalizada',
-        keywords: kwsRaw,
-        f1: { h: c.empatia || '', m: c.empatia || '' },
-        f2: { h: '', m: '' },
-        f3: { disminucion1: c.propuesta || '', disminucion2: '', cierre: '' },
-        arbol: { pregunta: '', ramas: [] },
-        esCustom: true
-      });
-    });
+    // ============================================================
+    // SCORING INTELIGENTE POR CONTEXTO
+    // ============================================================
+
+    // Sinónimos y expansiones por causal — BASE MASIVA
+    var sinonimos = {
+
+      desempleo: [
+        // Español directo
+        'perdi mi trabajo','perdí mi trabajo','me quede sin trabajo','me quedé sin trabajo',
+        'sin trabajo','sin empleo','no tengo trabajo','no tengo empleo','no estoy trabajando',
+        'me despidieron','me echaron','me liquidaron','fui despedido','fui despedida',
+        'me fui de la empresa','salí de la empresa','cerraron mi empresa','cerraron la empresa',
+        'renuncié','renuncie','dejé de trabajar','deje de trabajar','me salí del trabajo',
+        'me sali del trabajo','perdí el trabajo','perdi el trabajo','me quedé desempleado',
+        'me quede desempleado','me quedé desempleada','quedé desempleado','quede desempleado',
+        'quedé desempleada','quede desempleada','estoy desempleado','estoy desempleada',
+        'no tengo ingresos','sin ingresos','sin sueldo','sin salario','no tengo sueldo',
+        'no tengo salario','me cancelaron el contrato','terminaron mi contrato',
+        'no me renovaron','no me renovaron el contrato','me dieron de baja en el trabajo',
+        'me sacaron del trabajo','me retiraron del trabajo','perdí mi empleo','perdi mi empleo',
+        'ya no tengo empleo','ya no tengo trabajo','me encuentro sin trabajo',
+        'estoy buscando trabajo','busco trabajo','en búsqueda de empleo','en busca de empleo',
+        'me tuvo que ir del trabajo','tuve que renunciar','tuve que dejar el trabajo',
+        'me tocó renunciar','me toco renunciar','salí de mi trabajo','sali de mi trabajo',
+        'me retiraron','me prescindieron','prescindieron de mis servicios',
+        'no tengo con qué','no tengo con que','no cuento con ingresos',
+        'estoy sin trabajo','llevo meses sin trabajo','meses sin empleo',
+        'perdí la fuente de ingresos','perdi la fuente de ingresos',
+        // Inglés
+        'lost my job','lost job','lost my work','i lost my job','i lost my work',
+        'unemployed','i am unemployed','i am now unemployed','became unemployed',
+        'got fired','been fired','was fired','i was fired','i got fired',
+        'laid off','got laid off','been laid off','i was laid off','i got laid off',
+        'no longer employed','no longer working','lost my income','lost income',
+        'out of work','out of a job','job loss','without work','without a job',
+        'had to quit','had to leave my job','lost employment','left my job',
+        'terminated','my contract ended','contract terminated','let go from job',
+        'redundant','made redundant','company closed','company shut down',
+        'no income','without income','no longer have income','cant work',
+        'i quit my job','resigned','i resigned','i had to resign'
+      ],
+
+      economia: [
+        // Español directo
+        'problemas economicos','problemas económicos','dificultades economicas',
+        'dificultades económicas','crisis economica','crisis económica',
+        'situacion economica dificil','situación económica difícil',
+        'estoy pasando por problemas economicos','estoy pasando por problemas económicos',
+        'estoy pasando por dificultades','estoy pasando por una crisis',
+        'no me alcanza','no me alcanza el dinero','no me alcanza el sueldo',
+        'no alcanzo','no alcanzo a pagar','no me da el dinero','no me da para todo',
+        'no me da el presupuesto','no me da el sueldo','el sueldo no me alcanza',
+        'gastos muy altos','muchos gastos','los gastos subieron','gastos aumentaron',
+        'muy caro','me queda poco dinero','me queda poco','no me sobra nada',
+        'no me sobra','no tengo dinero','sin dinero','sin plata','no tengo plata',
+        'estoy sin dinero','estoy sin plata','ando sin dinero','ando sin plata',
+        'muy ajustado','muy ajustada','ajustado economicamente','ajustada económicamente',
+        'apretado economicamente','apretada económicamente','apretado de dinero',
+        'apretada de dinero','ando apretado','ando apretada','ando muy justo',
+        'presupuesto apretado','presupuesto limitado','presupuesto ajustado',
+        'tengo deudas','muchas deudas','endeudado','endeudada','lleno de deudas',
+        'llena de deudas','debo mucho','debo mucho dinero','tengo compromisos financieros',
+        'compromisos economicos','compromisos económicos','tengo muchos compromisos',
+        'no puedo pagar','ya no puedo pagar','no puedo costear','ya no puedo costear',
+        'no puedo permitirme','no me puedo permitir','no puedo darme ese lujo',
+        'reducir gastos','recortar gastos','recortar presupuesto','bajar gastos',
+        'ahorrar dinero','necesito ahorrar','tengo que ahorrar','hay que ahorrar',
+        'economizar','tengo que economizar','hay que economizar',
+        'estoy mal economicamente','estoy mal económicamente','estoy pasando las duras',
+        'estoy en las malas','estoy en un momento difícil','estoy en un momento dificil',
+        'momento economico dificil','momento económico difícil','no anda bien la economia',
+        'no anda bien la economía','la economia esta dificil','la economía está difícil',
+        'todo esta muy caro','todo está muy caro','la vida esta cara','la vida está cara',
+        'inflacion','inflación','el costo de vida subio','el costo de vida subió',
+        'no me alcanza para todo','no me llega para todo','no tengo para todo',
+        'justo y necesario','lo justo y necesario','lo basico nada mas',
+        'lo básico nada más','con lo justo','viviendo con lo justo',
+        'me toca priorizar','tengo que priorizar','debo priorizar gastos',
+        'no tengo fondos','fondos insuficientes','cuenta sin fondos',
+        'tarjeta sin fondos','no tengo recursos','recursos limitados',
+        // Inglés
+        'financial difficulties','financial problems','financial hardship','financial struggle',
+        'money problems','money issues','money trouble','having money problems',
+        'cant afford','cannot afford','i cannot afford','i cant afford',
+        'struggling financially','financial crisis','in financial crisis',
+        'tight budget','budget is tight','on a tight budget','very tight budget',
+        'low on money','low on funds','short on money','short on cash','short on funds',
+        'no money','without money','without funds','no funds','insufficient funds',
+        'lots of debt','too much debt','in debt','deeply in debt',
+        'expenses too high','expenses went up','costs too high','everything is expensive',
+        'inflation','cost of living','living costs','high cost of living',
+        'need to cut expenses','cut my expenses','reduce expenses','saving money',
+        'hard times financially','going through hard times','difficult financial situation',
+        'prioritize expenses','cant keep up with expenses','overwhelmed with bills',
+        'bills are too high','too many bills','struggling with bills',
+        'economic situation','bad economic situation','economy is bad',
+        'lost my savings','savings gone','no savings left','used up my savings',
+
+        // Mensajes reales de donantes
+        'no tengo liquidez',
+        'no tengo liquidez para seguir',
+        'no cuento con liquidez',
+        'sin liquidez',
+        'falta de liquidez',
+        'problemas de liquidez',
+        'un cargo mensual no me es posible',
+        'cargo mensual no me es posible',
+        'no me es posible un cargo mensual',
+        'no me es posible el cargo mensual',
+        'cargo mes a mes es dificil',
+        'cargo mes a mes es difícil',
+        'mes a mes es dificil',
+        'mes a mes es difícil',
+        'tengo distintos gastos familiares',
+        'gastos familiares y personales',
+        'gastos familiares',
+        'distintos gastos',
+        'muchos gastos familiares',
+        'en el momento no cuento con el dinero',
+        'no cuento con el dinero',
+        'no cuento con dinero para donaciones',
+        'no cuento con recursos',
+        'no puedo hacer donaciones indefinidamente',
+        'suspenderlo por favor',
+        'ayudame a suspenderlo',
+        'ayúdame a suspenderlo',
+        'quiero suspenderlo'
+      ],
+
+      unica: [
+        // Español
+        'quise donar una sola vez','quería donar una sola vez','queria donar una sola vez',
+        'solo quise donar una vez','solo quería donar una vez','solo queria donar una vez',
+        'fue un pago unico','fue un pago único','quise hacer un pago unico',
+        'quise hacer un pago único','pensé que era una sola vez','pense que era una sola vez',
+        'pensé que era un solo pago','pense que era un solo pago','creí que era una sola vez',
+        'crei que era una sola vez','creía que era una sola vez','creia que era una sola vez',
+        'no sabia que era mensual','no sabía que era mensual','no sabia que era recurrente',
+        'no sabía que era recurrente','no me di cuenta que era mensual',
+        'no entendí que era mensual','no entendi que era mensual',
+        'no entendí que se iba a repetir','no entendi que se iba a repetir',
+        'no quiero suscripcion','no quiero suscripción','no quiero que me cobren mensual',
+        'no quiero pago mensual','no quiero cobro mensual','no quiero cobro recurrente',
+        'no quiero donacion mensual','no quiero donación mensual',
+        'no quiero compromiso mensual','no quiero compromiso recurrente',
+        'fue un error','me suscribi sin querer','me suscribí sin querer',
+        'me inscribi sin querer','me inscribí sin querer','fue accidental',
+        'fue involuntario','fue sin querer','no fue intencional','no era mi intención',
+        'no era mi intencion','donacion única','donación única','donacion unica',
+        'aporte único','aporte unico','solo un aporte','solo una donacion','solo una donación',
+        'no quiero que se repita','no quiero que se siga cobrando','quiero que paren los cobros',
+        'quiero cancelar la suscripcion','quiero cancelar la suscripción',
+        'quiero cancelar el débito','quiero cancelar el debito',
+        'quiero cancelar el pago mensual','quiero cancelar el cobro mensual',
+        // Inglés
+        'one time donation','one time only','one time payment','i thought it was one time',
+        'i thought it was a one time','thought it was once','thought it was one payment',
+        'did not know it was monthly','didnt know it was monthly','did not know it was recurring',
+        'not supposed to be monthly','was not supposed to repeat','should have been one time',
+        'accidental subscription','signed up by mistake','subscribed by accident',
+        'did not mean to subscribe','did not intend to subscribe','unintentional subscription',
+        'cancel subscription','cancel recurring','cancel monthly payment','cancel auto payment',
+        'stop recurring','stop monthly','stop the monthly charge','no more monthly',
+        'i want to cancel the subscription','please cancel my subscription',
+
+        // Mensajes reales de donantes
+        'prefiero hacer una donacion al final del ano',
+        'prefiero hacer una donación al final del año',
+        'donacion al final del ano',
+        'donación al final del año',
+        'donacion anual',
+        'donación anual',
+        'prefiero donacion anual',
+        'prefiero donación anual',
+        'cuando recibo bonificacion',
+        'cuando recibo bonificación',
+        'cuando recibo mi bono',
+        'al final del ano hago donacion',
+        'al final del año hago donación',
+        'no tienen esa modalidad',
+        'ustedes no tienen esa modalidad',
+        'pago unico al año',
+        'pago único al año',
+        'una vez al año',
+        'una vez al ano'
+      ],
+
+      otraorg: [
+        // Español
+        'quiero apoyar otra organizacion','quiero apoyar otra organización',
+        'quiero donar a otra organizacion','quiero donar a otra organización',
+        'prefiero apoyar otra causa','prefiero otra organizacion','prefiero otra organización',
+        'me interesa otra organizacion','me interesa otra organización',
+        'encontré otra organizacion','encontré otra organización',
+        'encontre otra organizacion','encontre otra organización',
+        'hay otra fundacion','hay otra fundación','hay otra fundacion que me interesa',
+        'hay otra fundación que me interesa','hay otra fundacion que me gusta',
+        'hay otra fundación que me gusta','me cambio a otra organizacion',
+        'me cambio a otra organización','quiero cambiarme de organizacion',
+        'quiero cambiarme de organización','voy a apoyar otra fundacion',
+        'voy a apoyar otra fundación','voy a donar a otra fundacion',
+        'voy a donar a otra fundación','voy a donar en otro lugar',
+        'voy a donar a otro lado','quiero redirigir mi donacion',
+        'quiero redirigir mi donación','quiero redirigir mis aportes',
+        'cambié de causa','cambie de causa','cambié de organización','cambie de organizacion',
+        'decidí apoyar otra causa','decidi apoyar otra causa',
+        'decidí cambiar de organizacion','decidí cambiar de organización',
+        'me voy a otra fundacion','me voy a otra fundación',
+        'me voy a otra organizacion','me voy a otra organización',
+        'quiero apoyar otra cosa','voy a apoyar otra cosa',
+        'encontré algo que me gusta más','encontre algo que me gusta mas',
+        'encontré una causa que me llama más','encontre una causa que me llama mas',
+        'me llama más otra causa','me llama mas otra causa',
+        'quiero concentrarme en otra causa','me identifico más con otra causa',
+        'me identifico mas con otra causa','otra causa me parece más importante',
+        'otra causa me parece mas importante',
+        'voy a apoyar a cruz roja','voy a apoyar médicos sin fronteras',
+        'voy a apoyar medicos sin fronteras','voy a apoyar save the children',
+        'voy a apoyar world vision','voy a apoyar plan internacional',
+        'voy a apoyar plan international','voy a apoyar otra ong',
+        'voy a apoyar otra ONG','otra ong me interesa','otra ONG me interesa',
+        // Inglés
+        'want to support another organization','i want to support another organization',
+        'found another charity','found a better charity','found another cause',
+        'prefer another organization','prefer a different charity',
+        'switching to another charity','switching to another organization',
+        'changing my donation to another','donating to another organization instead',
+        'going to donate elsewhere','donating somewhere else','donating to another cause',
+        'another organization caught my attention','another cause resonates more with me',
+        'different charity aligns better','better fit for me','more aligned with my values',
+        'i found another nonprofit','supporting a different nonprofit',
+        'changing charities','i am moving my donation','redirecting my donation',
+        'i prefer to donate to','i decided to donate to','going to donate to',
+        'supporting another cause now','other organization','another foundation',
+        'different cause','new cause','other charity','another charity i found'
+      ]
+    };
+
+
+    // Negaciones que modifican el contexto
+    var negaciones = ['no ','never ','nunca ','jamás ','jamas ','sin ','without '];
+
+    // Palabras muy débiles que solas no significan nada
+    var muydebiles = new Set(['no','si','sí','ya','me','mi','tu','su','un','una','con','por','para','que','qué','como','cómo','pero','mas','más','muy','bien','mal','hoy','ayer','ahora','antes','después','despues','cuando','donde','dónde','porque','porqué','esto','eso','esta','ese','hay','ser','estar','tener','hacer']);
 
     var resultados = [];
 
-    todasCausales.forEach(function(causal) {
+    // Analizar cada causal
+    DB.forEach(function(causal) {
       try {
-        var palabrasClave = Array.isArray(causal.keywords) ? causal.keywords : [];
-        if (palabrasClave.length === 0) return;
-
         var puntaje = 0;
         var coincidencias = [];
+        var todasKw = [];
 
-        var kwOrdenadas = palabrasClave.slice().sort(function(a, b) { return String(b).length - String(a).length; });
+        // Combinar keywords originales + sinónimos extendidos
+        var kwBase = Array.isArray(causal.keywords) ? causal.keywords : [];
+        var kwExtra = sinonimos[causal.id] || [];
+        todasKw = kwBase.concat(kwExtra);
 
-        kwOrdenadas.forEach(function(kw) {
+        // Eliminar duplicados
+        var kwUnicas = [];
+        var vistas = {};
+        todasKw.forEach(function(kw) {
+          var k = normalizarTexto(kw);
+          if (k && !vistas[k]) { vistas[k] = true; kwUnicas.push(kw); }
+        });
+
+        // Ordenar de más larga a más corta (frases primero)
+        kwUnicas.sort(function(a, b) { return String(b).length - String(a).length; });
+
+        kwUnicas.forEach(function(kw) {
           if (!kw || typeof kw !== 'string') return;
           var kwNorm = normalizarTexto(kw);
           if (!kwNorm || kwNorm.length < 3) return;
 
           var palabras = kwNorm.split(/\s+/);
           var esFrase = palabras.length > 1;
-          var esDebil = palabras.every(function(p) { return palabrasDebiles.indexOf(p) !== -1; });
-          if (esDebil) return;
+
+          // Ignorar si todas las palabras son muy débiles
+          var todasDebiles = palabras.every(function(p) { return muydebiles.has(p); });
+          if (todasDebiles) return;
 
           if (input.indexOf(kwNorm) !== -1) {
-            var pts = esFrase ? Math.min(kwNorm.length * 2, 40) : 5;
+            // Puntaje base según longitud
+            var pts = esFrase ? Math.min(kwNorm.length * 3, 60) : 8;
+
+            // Bonus si la frase es muy específica (más de 3 palabras)
+            if (palabras.length >= 3) pts += 20;
+            if (palabras.length >= 4) pts += 15;
+
+            // Bonus si está cerca del inicio del mensaje (más relevante)
+            var posEnInput = input.indexOf(kwNorm);
+            if (posEnInput < input.length * 0.3) pts += 10;
+
+            // Penalización si hay negación justo antes
+            var contextoAntes = input.substring(Math.max(0, posEnInput - 15), posEnInput);
+            var hayNegacion = negaciones.some(function(neg) { return contextoAntes.indexOf(neg) !== -1; });
+            if (hayNegacion && causal.id !== 'noreconoce') pts = Math.floor(pts * 0.3);
+
             puntaje += pts;
             coincidencias.push({ texto: kw, puntos: pts });
           }
         });
+
+        // Análisis semántico adicional por causal
+        // Detectar contexto global del mensaje
+        var tieneNegacionGlobal = negaciones.some(function(n) { return input.startsWith(n.trim()); });
+
+        // Boost si el mensaje tiene múltiples señales de la misma causal
+        if (coincidencias.length >= 2) puntaje += 25;
+        if (coincidencias.length >= 3) puntaje += 20;
 
         if (puntaje > 0) {
           resultados.push({ causal: causal, puntaje: puntaje, coincidencias: coincidencias });
@@ -923,65 +1186,114 @@ function buscar() {
       }
     });
 
+    // Causales personalizadas
+    causales.forEach(function(c) {
+      try {
+        var kwsRaw = normalizarTexto(c.frase || '').split(/\s+/).filter(function(w) { return w.length > 4; });
+        if (kwsRaw.length === 0) return;
+        var puntaje = 0;
+        var coincidencias = [];
+        kwsRaw.forEach(function(kw) {
+          if (input.indexOf(kw) !== -1 && !muydebiles.has(kw)) {
+            puntaje += 8;
+            coincidencias.push({ texto: kw, puntos: 8 });
+          }
+        });
+        if (puntaje > 0) {
+          resultados.push({
+            causal: { id:'custom-'+c.id, emoji:c.emoji||'💬', nombre:c.title||'Personalizada', esCustom:true, f1:{h:c.empatia||'',m:c.empatia||''}, f3:{disminucion1:c.propuesta||'',disminucion2:'',cierre:''} },
+            puntaje: puntaje, coincidencias: coincidencias
+          });
+        }
+      } catch(e) { console.warn('Error causal custom:', e); }
+    });
+
+    // Ordenar por puntaje
     resultados.sort(function(a, b) { return b.puntaje - a.puntaje; });
+
+    // Umbral mínimo para evitar falsos positivos
+    var umbral = 8;
+    resultados = resultados.filter(function(r) { return r.puntaje >= umbral; });
 
     // Sin coincidencias
     if (resultados.length === 0) {
-      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Sin coincidencia</span><div><div class="fase-title">No encontramos una causal exacta</div><div class="fase-subtitle">Usa los atajos de abajo para ir a una causal</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Respuesta universal</div><div class="msg-text" id="msg-univ"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
+      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Sin coincidencia</span><div><div class="fase-title">No encontramos una causal exacta</div><div class="fase-subtitle">Usa los atajos de abajo o agrega esta frase como causal nueva</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Respuesta universal</div><div class="msg-text" id="msg-univ"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
       var univ = document.getElementById('msg-univ');
       if (univ) univ.textContent = '"Hola [Nombre], muchas gracias por contactarnos. Queremos entender bien tu situación para ayudarte de la mejor manera. ¿Podrías contarme un poco más sobre lo que está pasando?"';
       return;
     }
 
     var mejor = resultados[0];
-    var segundo = (resultados[1] && resultados[1].puntaje >= mejor.puntaje * 0.7) ? resultados[1] : null;
-    var confianza = mejor.puntaje >= 30 ? '🟢 Alta' : mejor.puntaje >= 15 ? '🟡 Media' : '🔴 Baja';
-    var frasesCoinc = mejor.coincidencias.slice(0, 3).map(function(c) { return '"' + c.texto + '"'; }).join(', ');
+    var segundo = (resultados[1] && resultados[1].puntaje >= mejor.puntaje * 0.65) ? resultados[1] : null;
+    // Nivel visual simple — sin puntajes técnicos
+    var nivelColor = mejor.puntaje >= 50 ? '#00A651' : mejor.puntaje >= 20 ? '#F5A623' : '#E2231A';
+    var nivelEmoji = mejor.puntaje >= 50 ? '🟢' : mejor.puntaje >= 20 ? '🟡' : '🔴';
+    var nivelTexto = mejor.puntaje >= 50 ? 'Muy seguro' : mejor.puntaje >= 20 ? 'Probable' : 'Revisa el mensaje';
+    var nivelConsejo = mejor.puntaje >= 50 ? 'Usa el guion directo' : mejor.puntaje >= 20 ? 'Verifica antes de responder' : 'Lee bien el mensaje del donante';
 
     // Causal personalizada
     if (mejor.causal.esCustom) {
-      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f2">' + mejor.causal.emoji + ' ' + mejor.causal.nombre + '</span><div><div class="fase-title">Causal personalizada</div><div class="fase-subtitle">Confianza: ' + confianza + ' · Puntaje: ' + mejor.puntaje + '</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Empatía</div><div class="msg-text" id="res-ec"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div><div class="msg propuesta"><div class="msg-label verde">💚 Propuesta</div><div class="msg-text" id="res-pc"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
-      var ec = document.getElementById('res-ec');
-      var pc = document.getElementById('res-pc');
-      if (ec) ec.textContent = '"' + mejor.causal.f1.h + '"';
-      if (pc) pc.textContent = '"' + mejor.causal.f3.disminucion1 + '"';
+      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f2">'+mejor.causal.emoji+' '+mejor.causal.nombre+'</span><div><div class="fase-title">Causal personalizada</div><div class="fase-subtitle">Confianza: '+confianza+' · Puntaje: '+mejor.puntaje+'</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Empatía</div><div class="msg-text" id="res-ec"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div><div class="msg propuesta"><div class="msg-label verde">💚 Propuesta</div><div class="msg-text" id="res-pc"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
+      var ec = document.getElementById('res-ec'); var pc = document.getElementById('res-pc');
+      if (ec) ec.textContent = '"'+mejor.causal.f1.h+'"';
+      if (pc) pc.textContent = '"'+mejor.causal.f3.disminucion1+'"';
       return;
     }
 
     var d = mejor.causal;
-    var alertaSegunda = (segundo && !segundo.causal.esCustom) ?
-      '<div class="alert amarillo" style="margin-bottom:8px;"><strong>🤔 También podría ser:</strong> ' + segundo.causal.emoji + ' ' + segundo.causal.nombre + ' (puntaje: ' + segundo.puntaje + ') — <span style="cursor:pointer;color:var(--azul-oscuro);font-weight:700;" onclick="irA(\'' + segundo.causal.id + '\')">Ver ese guion →</span></div>' : '';
+    var alertaSegunda = '';
+    if (segundo && !segundo.causal.esCustom) {
+      alertaSegunda = '<div class="alert amarillo" style="margin-bottom:8px;"><strong>🤔 También podría ser:</strong> ' + segundo.causal.emoji + ' ' + segundo.causal.nombre + ' — <button style="background:none;border:none;color:var(--azul-oscuro);font-weight:700;cursor:pointer;font-size:12px;" id="btn-segunda">Ver ese guion →</button></div>';
+    }
 
-    res.innerHTML = '<div class="alert verde" style="margin-bottom:8px;"><strong>✅ Causal detectada: ' + d.emoji + ' ' + d.nombre + '</strong><br><span style="font-size:11px;">Confianza: ' + confianza + ' · Puntaje: ' + mejor.puntaje + ' · Coincidencias: ' + frasesCoinc + '</span></div>' +
-      alertaSegunda +
-      '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Fase 1</span><div><div class="fase-title">Empatía</div></div></div>' +
-      '<div class="msg empatia"><div class="msg-label azul">💙 Para hombre</div><div class="msg-text" id="r-f1h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
-      '<div class="msg empatia" style="margin-top:6px;"><div class="msg-label azul">💙 Para mujer</div><div class="msg-text" id="r-f1m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
-      '<div class="fase"><div class="fase-header"><span class="fase-badge f2">Fase 2</span><div><div class="fase-title">Sensibilización</div></div></div>' +
-      '<div class="msg sensi"><div class="msg-label lila">💜 Para hombre</div><div class="msg-text" id="r-f2h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
-      '<div class="msg sensi" style="margin-top:6px;"><div class="msg-label lila">💜 Para mujer</div><div class="msg-text" id="r-f2m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
-      '<div class="fase"><div class="fase-header"><span class="fase-badge f3">Fase 3</span><div><div class="fase-title">Propuesta</div></div></div>' +
-      '<div class="msg propuesta"><div class="msg-label verde">💚 Disminución 1</div><div class="msg-text" id="r-d1"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
-      '<div class="msg propuesta" style="margin-top:6px;"><div class="msg-label verde">💚 Disminución 2</div><div class="msg-text" id="r-d2"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
-      '<div class="msg cierre" style="margin-top:6px;"><div class="msg-label rojo">❤️ Cierre</div><div class="msg-text" id="r-cierre"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
-      '<button class="search-btn" style="margin-top:4px;" onclick="irA(\'' + d.id + '\')">📖 Ver guion completo →</button>';
+    res.innerHTML =
+      '<div style="background:white;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'+
+      '<span style="font-size:28px;">'+d.emoji+'</span>'+
+      '<div>'+
+      '<div style="font-size:14px;font-weight:700;color:#1A2733;">'+d.nombre+'</div>'+
+      '<div style="font-size:11px;color:#5C6670;margin-top:2px;">Causal detectada automáticamente</div>'+
+      '</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;background:#F4F6F8;border-radius:8px;padding:10px 12px;">'+
+      '<span style="font-size:18px;">'+nivelEmoji+'</span>'+
+      '<div style="flex:1;">'+
+      '<div style="font-size:12px;font-weight:700;color:'+nivelColor+';">'+nivelTexto+'</div>'+
+      '<div style="font-size:11px;color:#5C6670;margin-top:1px;">'+nivelConsejo+'</div>'+
+      '</div>'+
+      '</div>'+
+      '</div>'+
+      alertaSegunda+
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Fase 1</span><div><div class="fase-title">Empatía</div></div></div>'+
+      '<div class="msg empatia"><div class="msg-label azul">💙 Para hombre</div><div class="msg-text" id="r-f1h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>'+
+      '<div class="msg empatia" style="margin-top:6px;"><div class="msg-label azul">💙 Para mujer</div><div class="msg-text" id="r-f1m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>'+
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f2">Fase 2</span><div><div class="fase-title">Sensibilización</div></div></div>'+
+      '<div class="msg sensi"><div class="msg-label lila">💜 Para hombre</div><div class="msg-text" id="r-f2h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>'+
+      '<div class="msg sensi" style="margin-top:6px;"><div class="msg-label lila">💜 Para mujer</div><div class="msg-text" id="r-f2m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>'+
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f3">Fase 3</span><div><div class="fase-title">Propuesta</div></div></div>'+
+      '<div class="msg propuesta"><div class="msg-label verde">💚 Disminución 1</div><div class="msg-text" id="r-d1"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>'+
+      '<div class="msg propuesta" style="margin-top:6px;"><div class="msg-label verde">💚 Disminución 2</div><div class="msg-text" id="r-d2"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>'+
+      '<div class="msg cierre" style="margin-top:6px;"><div class="msg-label rojo">❤️ Cierre</div><div class="msg-text" id="r-cierre"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>'+
+      '<button class="search-btn" style="margin-top:4px;" id="btn-ver-guion">📖 Ver guion completo →</button>';
 
-    var setTC = function(id, val) {
-      var e = document.getElementById(id);
-      if (e && val) e.textContent = '"' + val + '"';
-    };
-    setTC('r-f1h', d.f1.h);
-    setTC('r-f1m', d.f1.m);
-    setTC('r-f2h', d.f2.h);
-    setTC('r-f2m', d.f2.m);
-    setTC('r-d1',  d.f3.disminucion1);
-    setTC('r-d2',  d.f3.disminucion2);
+    var setTC = function(id, val) { var e = document.getElementById(id); if(e && val) e.textContent = '"'+val+'"'; };
+    setTC('r-f1h', d.f1.h); setTC('r-f1m', d.f1.m);
+    setTC('r-f2h', d.f2.h); setTC('r-f2m', d.f2.m);
+    setTC('r-d1', d.f3.disminucion1); setTC('r-d2', d.f3.disminucion2);
     setTC('r-cierre', d.f3.cierre);
+
+    // Conectar botones con event listeners seguros
+    var btnVer = document.getElementById('btn-ver-guion');
+    if (btnVer) { (function(id){ btnVer.addEventListener('click', function(){ irA(id); }); })(d.id); }
+    var btnSegunda = document.getElementById('btn-segunda');
+    if (btnSegunda && segundo && !segundo.causal.esCustom) {
+      (function(id){ btnSegunda.addEventListener('click', function(){ irA(id); }); })(segundo.causal.id);
+    }
 
   } catch(err) {
     console.error('Error en buscar():', err);
     var res2 = document.getElementById('resultado');
-    if (res2) res2.innerHTML = '<div class="alert amarillo"><strong>⚠️ Ocurrió un error al analizar el mensaje.</strong> Por favor intenta de nuevo.</div>';
+    if (res2) res2.innerHTML = '<div class="alert amarillo"><strong>⚠️ Error al analizar.</strong> Por favor intenta de nuevo.</div>';
   }
 }
 
@@ -1054,6 +1366,34 @@ function eliminar(id) {
 
 
 
+        // Mensajes reales — decisión firme
+        'tome una decision',
+        'tomé una decisión',
+        'ya tome una decision',
+        'ya tomé una decisión',
+        'mi decision no va a cambiar',
+        'mi decisión no va a cambiar',
+        'sin importar el monto',
+        'aunque el monto sea menor',
+        'decision tomada',
+        'decisión tomada',
+        'ya decidi',
+        'ya decidí',
+        'es definitivo',
+        'no voy a cambiar de opinion',
+        'no voy a cambiar de opinión',
+        'no me van a convencer',
+        'yo misma los buscare',
+        'yo misma los buscaré',
+        'cuando pueda yo los busco',
+        'cuando lo desee los contacto',
+        'no quiero que me llamen',
+        'no me llamen',
+        'no me contacten',
+        'eso es todo lo que puedo hacer',
+        'lo siento no puedo mas',
+        'lo siento no puedo más',
+        'es todo lo que puedo'
 </script>
 </body>
 </html>
