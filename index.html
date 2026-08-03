@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Retención UNICEF Colombia</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap');
+:root{
+  --azul:#1CABE2;--azul-oscuro:#0083C4;--azul-fondo:#E8F6FD;
+  --amarillo:#F5A623;--amarillo-claro:#FFF8EC;
+  --verde:#00A651;--verde-claro:#E6F7EF;
+  --rojo:#E2231A;--rojo-claro:#FDE8E7;
+  --lila:#8B5CF6;--lila-claro:#F3EFFE;
+  --naranja:#F97316;--naranja-claro:#FFF0E6;
+  --gris:#5C6670;--gris-claro:#F4F6F8;
+  --texto:#1A2733;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F0F7FB;color:var(--texto);min-height:100vh;}
+
+.header{background:linear-gradient(135deg,#005B8E,#0083C4);color:white;padding:18px 16px;display:flex;align-items:center;gap:12px;}
+.header-logo{width:42px;height:42px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:10px;font-weight:700;color:#0083C4;text-align:center;line-height:1.2;flex-shrink:0;}
+.header-text h1{font-family:'Fraunces',serif;font-size:16px;font-weight:700;}
+.header-text p{font-size:11px;opacity:.85;margin-top:2px;}
+
+.meta-bar{background:#FFF3CD;padding:9px 16px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#7A4F00;border-bottom:1px solid #F5C842;}
+
+/* CONTADOR */
+.retention-bar{background:linear-gradient(135deg,#005B8E,#0083C4);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.retention-info{display:flex;align-items:center;gap:10px;}
+.retention-title{color:white;font-size:11px;font-weight:600;opacity:.85;}
+.retention-count{color:white;font-family:'Fraunces',serif;font-size:22px;font-weight:700;line-height:1;}
+.retention-goal{color:rgba(255,255,255,.6);font-size:11px;}
+.retention-progress{flex:1;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;min-width:80px;}
+.retention-fill{height:100%;background:#4ADE80;border-radius:4px;transition:width .4s ease;}
+.retention-btns{display:flex;gap:6px;}
+.ret-btn{width:32px;height:32px;border-radius:8px;border:none;font-size:16px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ret-btn.add{background:#4ADE80;color:#003a00;}
+.ret-btn.add:hover{background:#22c55e;}
+.ret-btn.sub{background:rgba(255,255,255,.15);color:white;}
+.ret-btn.sub:hover{background:rgba(255,255,255,.25);}
+.retention-stars{display:flex;gap:3px;}
+.star{font-size:13px;opacity:.3;transition:opacity .3s;}
+.star.earned{opacity:1;}
+
+.tabs{display:flex;background:white;border-bottom:2px solid #DCE8F0;padding:0 10px;overflow-x:auto;gap:2px;}
+.tabs::-webkit-scrollbar{height:0;}
+.tab{padding:11px 11px;font-size:12px;font-weight:500;color:var(--gris);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;margin-bottom:-2px;background:none;border-left:none;border-right:none;border-top:none;font-family:'Inter',sans-serif;}
+.tab:hover{color:var(--azul);}
+.tab.active{color:var(--azul-oscuro);border-bottom-color:var(--azul-oscuro);font-weight:700;}
+
+.content{padding:16px 14px;max-width:680px;margin:0 auto;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.causal-header{background:white;border-radius:12px;padding:14px 16px;margin-bottom:12px;border-left:5px solid var(--azul);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.causal-title{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.causal-emoji{font-size:20px;}
+.causal-title h2{font-family:'Fraunces',serif;font-size:16px;font-weight:700;}
+.causal-desc{font-size:11.5px;color:var(--gris);line-height:1.5;}
+.semaforo{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;}
+.semaforo.verde{background:var(--verde-claro);color:var(--verde);}
+.semaforo.amarillo{background:var(--amarillo-claro);color:#B87300;}
+.semaforo.rojo{background:var(--rojo-claro);color:var(--rojo);}
+
+.fase{background:white;border-radius:12px;padding:14px 15px;margin-bottom:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);}
+.fase-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #EEF3F7;}
+.fase-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.fase-badge.f1{background:#E8F6FD;color:var(--azul-oscuro);}
+.fase-badge.f2{background:var(--lila-claro);color:#6D28D9;}
+.fase-badge.f3{background:var(--verde-claro);color:var(--verde);}
+.fase-title{font-size:12.5px;font-weight:700;color:var(--texto);}
+.fase-subtitle{font-size:11px;color:var(--gris);}
+
+.gender-toggle{display:flex;gap:6px;margin-bottom:10px;}
+.g-btn{flex:1;padding:7px;border-radius:8px;border:1.5px solid #DCE8F0;background:white;font-size:12px;font-weight:600;cursor:pointer;color:var(--gris);transition:all .2s;font-family:'Inter',sans-serif;}
+.g-btn.active{border-color:var(--azul-oscuro);background:var(--azul-fondo);color:var(--azul-oscuro);}
+.gender-content{display:none;}
+.gender-content.active{display:block;}
+
+.msg{background:var(--gris-claro);border-radius:10px;padding:11px 13px;margin-bottom:8px;}
+.msg.empatia{border-left:3px solid var(--azul);}
+.msg.sensi{border-left:3px solid var(--lila);}
+.msg.propuesta{border-left:3px solid var(--verde);}
+.msg.cierre{border-left:3px solid var(--rojo);}
+.msg-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.msg-label.azul{color:var(--azul-oscuro);}
+.msg-label.lila{color:#6D28D9;}
+.msg-label.verde{color:var(--verde);}
+.msg-label.rojo{color:var(--rojo);}
+.msg-text{font-size:12.5px;line-height:1.6;color:var(--texto);font-style:italic;}
+.msg-note{font-size:10.5px;color:var(--gris);margin-top:6px;line-height:1.4;font-style:normal;}
+.copy-btn{display:inline-block;margin-top:7px;font-size:11px;color:var(--azul-oscuro);cursor:pointer;background:none;border:1px solid #C8DFF0;border-radius:5px;padding:3px 9px;transition:all .15s;font-family:'Inter',sans-serif;}
+.copy-btn:hover{background:var(--azul-oscuro);color:white;}
+
+.or-divider{text-align:center;font-size:11px;font-weight:700;color:var(--gris);margin:6px 0;position:relative;}
+.or-divider::before,.or-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:#DCE8F0;}
+.or-divider::before{left:0;}
+.or-divider::after{right:0;}
+
+/* FASE 3 ACCORDION */
+.f3-container{display:flex;flex-direction:column;gap:8px;}
+.f3-option{background:white;border-radius:10px;border:1.5px solid #DCE8F0;overflow:hidden;transition:border-color .2s;}
+.f3-option.active{border-color:var(--verde);}
+.f3-option.warn{border-color:var(--amarillo);}
+.f3-option.info{border-color:var(--azul);}
+.f3-option.close{border-color:var(--rojo);}
+.f3-trigger{width:100%;display:flex;align-items:center;gap:10px;padding:11px 13px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;}
+.f3-trigger-icon{font-size:18px;flex-shrink:0;}
+.f3-trigger-label{flex:1;}
+.f3-trigger-title{font-size:12.5px;font-weight:700;color:var(--texto);}
+.f3-trigger-sub{font-size:10.5px;color:var(--gris);margin-top:1px;}
+.f3-trigger-arrow{font-size:11px;color:var(--gris);transition:transform .2s;flex-shrink:0;}
+.f3-trigger-arrow.open{transform:rotate(180deg);}
+.f3-body{display:none;padding:0 13px 13px;border-top:1px solid #EEF3F7;}
+.f3-body.open{display:block;}
+.sub-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap;margin-top:10px;}
+.sub-tab{padding:5px 11px;border-radius:6px;border:1.5px solid #DCE8F0;background:white;font-size:11.5px;font-weight:600;color:var(--gris);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.sub-tab.active{background:var(--azul-fondo);border-color:var(--azul-oscuro);color:var(--azul-oscuro);}
+.sub-content{display:none;}
+.sub-content.active{display:block;}
+.attempt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gris);margin-bottom:6px;margin-top:10px;}
+.attempt-label:first-child{margin-top:0;}
+.f3-connector{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:var(--gris);margin:4px 0;padding-left:4px;}
+.f3-connector::before{content:'↓';}
+
+.alert{border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.6;margin-bottom:12px;border-left:4px solid;}
+.alert.azul{background:var(--azul-fondo);border-color:var(--azul-oscuro);color:#003a5c;}
+.alert.amarillo{background:var(--amarillo-claro);border-color:var(--amarillo);color:#5a3a00;}
+.alert.verde{background:var(--verde-claro);border-color:var(--verde);color:#004a22;}
+
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gris);margin-bottom:8px;margin-top:4px;}
+
+.tree{background:white;border-radius:12px;padding:13px 14px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:10px;}
+.tree-title{font-size:12.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.tree-q{background:var(--azul-fondo);border-radius:8px;padding:9px 12px;font-size:12.5px;font-weight:600;color:var(--azul-oscuro);border-left:3px solid var(--azul);margin-bottom:8px;}
+.tree-branches{display:flex;flex-direction:column;gap:6px;}
+.tree-branch{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:var(--gris-claro);}
+.b-cond{font-size:10px;font-weight:700;flex-shrink:0;min-width:68px;padding-top:1px;}
+.b-cond.si{color:var(--verde);}
+.b-cond.duda{color:var(--amarillo);}
+.b-cond.no{color:var(--rojo);}
+.b-cond.otro{color:var(--lila);}
+.b-action{font-size:11.5px;color:var(--texto);line-height:1.5;}
+
+.search-box{background:white;border-radius:12px;padding:15px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:12px;}
+.search-box h3{font-size:14px;font-weight:700;margin-bottom:4px;}
+.search-box p{font-size:12px;color:var(--gris);margin-bottom:12px;line-height:1.5;}
+.search-textarea{border:1.5px solid #DCE8F0;border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--texto);width:100%;min-height:90px;resize:vertical;transition:border .2s;}
+.search-textarea:focus{outline:none;border-color:var(--azul);}
+.search-btn{background:var(--azul-oscuro);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;width:100%;transition:background .2s;}
+.search-btn:hover{background:#005B8E;}
+#resultado{margin-top:12px;}
+
+.lang-bar{display:none;background:#1A2733;color:white;padding:9px 14px;border-radius:10px;margin-bottom:10px;font-size:12px;align-items:center;gap:10px;}
+.lang-bar.visible{display:flex;}
+.lang-flag{font-size:18px;}
+.lang-text{flex:1;line-height:1.4;}
+.lang-btn{background:var(--azul);color:white;border:none;border-radius:6px;padding:5px 12px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.chip{background:white;border:1.5px solid #DCE8F0;border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:500;color:var(--gris);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.chip:hover{border-color:var(--azul);color:var(--azul-oscuro);}
+
+.add-form{background:white;border-radius:12px;padding:15px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:12px;}
+.add-form h3{font-size:14px;font-weight:700;margin-bottom:4px;}
+.add-form p{font-size:12px;color:var(--gris);margin-bottom:12px;line-height:1.5;}
+.form-row{display:flex;flex-direction:column;gap:5px;margin-bottom:9px;}
+.form-label{font-size:11px;font-weight:600;color:var(--gris);}
+.form-input{border:1.5px solid #DCE8F0;border-radius:8px;padding:9px 12px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--texto);transition:border .2s;width:100%;}
+.form-input:focus{outline:none;border-color:var(--azul);}
+textarea.form-input{min-height:70px;resize:vertical;}
+.add-btn{background:var(--azul-oscuro);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.add-btn:hover{background:#005B8E;}
+.custom-card{background:white;border-radius:12px;padding:13px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:9px;border-left:5px solid var(--lila);}
+.custom-card h4{font-size:13px;font-weight:700;margin-bottom:6px;}
+.custom-frase{background:var(--lila-claro);border-radius:7px;padding:9px 11px;font-size:12px;font-style:italic;line-height:1.6;color:var(--texto);margin-bottom:5px;}
+.custom-resp{background:var(--gris-claro);border-radius:7px;padding:9px 11px;font-size:11.5px;color:var(--gris);line-height:1.5;}
+.del-btn{background:none;border:1px solid #DCE8F0;border-radius:5px;padding:3px 8px;font-size:11px;color:var(--gris);cursor:pointer;margin-top:5px;font-family:'Inter',sans-serif;}
+.del-btn:hover{border-color:var(--rojo);color:var(--rojo);}
+
+.tip-card{background:white;border-radius:10px;padding:13px 14px;display:flex;gap:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:8px;}
+.tip-icon{font-size:20px;flex-shrink:0;}
+.tip-body h4{font-size:12.5px;font-weight:700;margin-bottom:2px;}
+.tip-body p{font-size:11.5px;color:var(--gris);line-height:1.5;}
+.impact-card{background:linear-gradient(135deg,#005B8E,#1CABE2);border-radius:12px;padding:14px;margin-bottom:12px;color:white;}
+.impact-card h3{font-family:'Fraunces',serif;font-size:13px;margin-bottom:8px;opacity:.9;}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.impact-stat{background:rgba(255,255,255,.15);border-radius:8px;padding:9px 10px;}
+.impact-stat .num{font-size:17px;font-weight:700;font-family:'Fraunces',serif;}
+.impact-stat .label{font-size:9.5px;opacity:.85;margin-top:1px;line-height:1.4;}
+.book-card{background:white;border-radius:10px;padding:12px 14px;display:flex;gap:10px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:8px;align-items:flex-start;}
+.book-spine{width:7px;border-radius:3px;flex-shrink:0;align-self:stretch;}
+.book-body h4{font-size:12.5px;font-weight:700;margin-bottom:1px;}
+.book-author{font-size:11px;color:var(--gris);margin-bottom:4px;}
+.book-body p{font-size:11.5px;color:var(--gris);line-height:1.5;}
+.divider{height:1px;background:#DCE8F0;margin:12px 0;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A2733;color:white;padding:10px 20px;border-radius:8px;font-size:13px;transition:transform .3s ease;z-index:100;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">UNI<br>CEF</div>
+  <div class="header-text">
+    <h1>Guía de Retención de Donantes</h1>
+    <p>Empatía · Sensibilización · Propuesta escalonada</p>
+  </div>
+</div>
+
+<div class="meta-bar">🎯 Meta mensual: <strong>8 retenciones</strong> de donantes extranjeros</div>
+
+<div class="retention-bar">
+  <div class="retention-info">
+    <div>
+      <div class="retention-title">Retenciones este mes</div>
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <span class="retention-count" id="ret-count">0</span>
+        <span class="retention-goal">/ 8</span>
+      </div>
+    </div>
+  </div>
+  <div class="retention-stars" id="ret-stars">
+    <span class="star" id="s1">⭐</span><span class="star" id="s2">⭐</span>
+    <span class="star" id="s3">⭐</span><span class="star" id="s4">⭐</span>
+    <span class="star" id="s5">⭐</span><span class="star" id="s6">⭐</span>
+    <span class="star" id="s7">⭐</span><span class="star" id="s8">⭐</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:4px;min-width:90px;">
+    <div class="retention-progress"><div class="retention-fill" id="ret-bar" style="width:0%"></div></div>
+    <div style="color:rgba(255,255,255,.7);font-size:10px;text-align:right;" id="ret-msg">¡Vamos, tú puedes! 💙</div>
+  </div>
+  <div class="retention-btns">
+    <button class="ret-btn sub" onclick="cambiarRetencion(-1)">−</button>
+    <button class="ret-btn add" onclick="cambiarRetencion(1)">+</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('buscador',this)">🔍 Buscador</button>
+  <button class="tab" onclick="showPanel('desempleo',this)">💼 Desempleo</button>
+  <button class="tab" onclick="showPanel('economia',this)">💸 Dificultad económica</button>
+  <button class="tab" onclick="showPanel('viaje',this)">✈️ Viaje al exterior</button>
+  <button class="tab" onclick="showPanel('unica',this)">🎁 Única vez</button>
+  <button class="tab" onclick="showPanel('agotamiento',this)">😔 Ya no puede más</button>
+  <button class="tab" onclick="showPanel('noreconoce',this)">❓ No reconoce cobro</button>
+  <button class="tab" onclick="showPanel('otraorg',this)">🔄 Otra organización</button>
+  <button class="tab" onclick="showPanel('agregar',this)">➕ Agregar causal</button>
+  <button class="tab" onclick="showPanel('tips',this)">💡 Tips & Libros</button>
+</div>
+
+<div class="content">
+
+<!-- BUSCADOR -->
+<div id="panel-buscador" class="panel active">
+  <div class="search-box">
+    <h3>¿Qué te dijo el donante?</h3>
+    <p>Escribe o pega el mensaje. El sistema detecta la causal y muestra las 3 fases automáticamente.</p>
+    <textarea id="donor-input" class="search-textarea" placeholder="Ej: 'I lost my job and can't keep donating...' o 'Ya no puedo seguir, no tengo trabajo'"></textarea>
+    <div class="lang-bar" id="lang-bar">
+      <span class="lang-flag" id="lang-flag">🇺🇸</span>
+      <div class="lang-text"><strong id="lang-title">Mensaje en inglés detectado</strong><br><span id="lang-sub">Adapta el guion al inglés del donante.</span></div>
+      <button class="lang-btn" onclick="document.getElementById('lang-bar').classList.remove('visible')">Entendido</button>
+    </div>
+    <button class="search-btn" onclick="buscar()">🔍 Analizar mensaje</button>
+  </div>
+  <div id="resultado"></div>
+  <p class="section-title">Ir directamente a una causal</p>
+  <div class="chips">
+    <div class="chip" onclick="irA('desempleo')">💼 Desempleo</div>
+    <div class="chip" onclick="irA('economia')">💸 Dificultad económica</div>
+    <div class="chip" onclick="irA('viaje')">✈️ Viaje al exterior</div>
+    <div class="chip" onclick="irA('unica')">🎁 Única vez</div>
+    <div class="chip" onclick="irA('agotamiento')">😔 Ya no puede más</div>
+    <div class="chip" onclick="irA('noreconoce')">❓ No reconoce cobro</div>
+    <div class="chip" onclick="irA('otraorg')">🔄 Otra organización</div>
+  </div>
+</div>
+
+<!-- PANELES DINÁMICOS -->
+<div id="panel-desempleo" class="panel"></div>
+<div id="panel-economia" class="panel"></div>
+<div id="panel-viaje" class="panel"></div>
+<div id="panel-unica" class="panel"></div>
+<div id="panel-agotamiento" class="panel"></div>
+<div id="panel-noreconoce" class="panel"></div>
+<div id="panel-otraorg" class="panel"></div>
+
+<!-- AGREGAR CAUSAL -->
+<div id="panel-agregar" class="panel">
+  <div class="alert azul"><strong>➕ Agrega causales nuevas.</strong> El buscador las incluye automáticamente.</div>
+  <div class="add-form">
+    <h3>Nueva causal</h3>
+    <div class="form-row"><label class="form-label">Nombre</label><input id="nt" class="form-input" type="text" placeholder="Ej: Jubilación..."></div>
+    <div class="form-row"><label class="form-label">¿Qué dice el donante?</label><textarea id="nf" class="form-input" placeholder="Ej: 'Me voy a jubilar...'"></textarea></div>
+    <div class="form-row"><label class="form-label">Frase de empatía</label><textarea id="ne" class="form-input" placeholder="Tu respuesta empática..."></textarea></div>
+    <div class="form-row"><label class="form-label">Propuesta</label><textarea id="np" class="form-input" placeholder="Pausa, reducción..."></textarea></div>
+    <div class="form-row"><label class="form-label">Emoji (opcional)</label><input id="nem" class="form-input" type="text" placeholder="💬"></div>
+    <button class="add-btn" onclick="agregarCausal()">➕ Agregar</button>
+  </div>
+  <div id="custom-list"></div>
+  <p id="empty-msg" style="text-align:center;color:#aaa;font-size:12px;padding:16px 0;">Aún no has agregado causales personalizadas.</p>
+</div>
+
+<!-- TIPS -->
+<div id="panel-tips" class="panel">
+  <div class="impact-card">
+    <h3>📊 Datos de impacto UNICEF Colombia 2025</h3>
+    <div class="impact-grid">
+      <div class="impact-stat"><div class="num">189K</div><div class="label">niños en emergencias 2025</div></div>
+      <div class="impact-stat"><div class="num">36K</div><div class="label">jóvenes en toma de decisiones</div></div>
+      <div class="impact-stat"><div class="num">25.510</div><div class="label">niños 0-5 años con educación</div></div>
+      <div class="impact-stat"><div class="num">19.700</div><div class="label">vacunados en 2025</div></div>
+      <div class="impact-stat"><div class="num">10.794</div><div class="label">con apoyo psicosocial</div></div>
+      <div class="impact-stat"><div class="num">95.474</div><div class="label">con agua y saneamiento</div></div>
+    </div>
+  </div>
+  <p class="section-title">Las 3 fases de retención</p>
+  <div class="tip-card"><div class="tip-icon">💙</div><div class="tip-body"><h4>Fase 1 — Empatía</h4><p>Siempre primero. Valida lo que siente el donante sin mencionar la donación. Una frase cálida y corta.</p></div></div>
+  <div class="tip-card"><div class="tip-icon">💜</div><div class="tip-body"><h4>Fase 2 — Sensibilización</h4><p>Después de que responda. Comparte el impacto real con cifras. Adapta el guion al género del donante.</p></div></div>
+  <div class="tip-card"><div class="tip-icon">💚</div><div class="tip-body"><h4>Fase 3 — Propuesta escalonada</h4><p>Disminución → Pausa (1-4 meses) → Bimensualidad → Cierre cálido.</p></div></div>
+  <div class="divider"></div>
+  <p class="section-title">Principios clave</p>
+  <div class="tip-card"><div class="tip-icon">🎯</div><div class="tip-body"><h4>Una sola pregunta por mensaje</h4><p>Dos preguntas abruman. Haz una, espera, luego la siguiente.</p></div></div>
+  <div class="tip-card"><div class="tip-icon">🧩</div><div class="tip-body"><h4>Usa siempre el nombre</h4><p>[Nombre] al inicio de cada mensaje. El donante siente que habla con una persona real.</p></div></div>
+  <div class="tip-card"><div class="tip-icon">⏸️</div><div class="tip-body"><h4>Pausa antes que cancelar</h4><p>"Pausar" es psicológicamente más fácil de aceptar. Ofrécela siempre.</p></div></div>
+  <div class="tip-card"><div class="tip-icon">🚪</div><div class="tip-body"><h4>Máximo 2 propuestas directas</h4><p>Si rechaza todo, cierra con dignidad. Un cierre cálido puede traerlo de vuelta.</p></div></div>
+  <div class="divider"></div>
+  <p class="section-title">📚 Libros recomendados</p>
+  <div class="book-card"><div class="book-spine" style="background:#1CABE2;"></div><div class="book-body"><h4>Retention Fundraising</h4><div class="book-author">Roger Craver</div><p>El más específico sobre retención de donantes.</p></div></div>
+  <div class="book-card"><div class="book-spine" style="background:#00A651;"></div><div class="book-body"><h4>Keep Your Donors</h4><div class="book-author">Simone Joyaux & Tom Ahern</div><p>Cómo construir compromisos que duren años.</p></div></div>
+  <div class="book-card"><div class="book-spine" style="background:#F5A623;"></div><div class="book-body"><h4>Influence</h4><div class="book-author">Robert Cialdini</div><p>Los 6 principios de persuasión. Disponible en español.</p></div></div>
+  <div class="book-card"><div class="book-spine" style="background:#8B5CF6;"></div><div class="book-body"><h4>SPIN Selling</h4><div class="book-author">Neil Rackham</div><p>4 preguntas para diagnosticar la situación del donante.</p></div></div>
+  <div class="book-card"><div class="book-spine" style="background:#E2231A;"></div><div class="book-body"><h4>Never Lose a Customer Again</h4><div class="book-author">Joey Coleman</div><p>100 días para construir una relación que no se pierda.</p></div></div>
+</div>
+
+</div>
+<div class="toast" id="toast">✅ Mensaje copiado</div>
+
+<script>
+// ============================================================
+// NORMALIZACIÓN ROBUSTA
+// ============================================================
+function normalizarTexto(valor) {
+  if (valor === null || valor === undefined) return '';
+  return String(valor)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// ============================================================
+// BASE DE DATOS DE CAUSALES
+// ============================================================
+var causales = [];
+
+const DB = [
+  {
+    id:'desempleo', emoji:'💼', nombre:'Desempleo',
+    color:'#1CABE2', colorClaro:'#E8F6FD',
+    nivel:'rojo', nivelIcon:'🔴', nivelLabel:'Difícil',
+    desc:'El donante perdió su trabajo. La causal más sensible — requiere máxima empatía antes de cualquier propuesta.',
+    keywords:['perdi mi trabajo','perdí mi trabajo','me quede sin trabajo','me quedé sin trabajo','sin empleo','desempleo','desempleado','desempleada','lost my job','unemployed','no tengo trabajo','me despidieron','laid off','sin ingresos','me echaron','fui despedido','fui despedida','me liquidaron','cerraron la empresa','no estoy trabajando','dejé de trabajar','renuncié','i was fired','i got fired'],
+    alerta:'⚠️ No menciones la donación en el primer mensaje. Primero la persona, después la propuesta.',
+    f1:{titulo:'Validar y acompañar',subtitulo:'Un mensaje corto y cálido. Sin mencionar la donación todavía.',
+      h:'[Nombre], muchas gracias por escribirnos y por la confianza de contarnos esto. Sabemos que perder el trabajo es un momento muy difícil. ¿Cómo estás llevando la situación?',
+      m:'[Nombre], gracias por escribirnos. Sabemos que perder el trabajo es una situación muy difícil y queremos que sepas que te entendemos. ¿Cómo estás tú en medio de todo esto?'},
+    f2:{titulo:'Sensibilización — Tu aporte ha transformado vidas',subtitulo:'Resalta su contribución personal con cifras reales.',
+      h:'[Nombre], gracias a tu esfuerzo y compromiso, hemos podido responder a emergencias en 12 departamentos del país y llegar a 189.162 niñas, niños y adolescentes que necesitaban ayuda urgente. Tu aporte ha sido parte de esa respuesta — y eso no tiene precio.',
+      m:'[Nombre], gracias a tu generosidad, hemos llegado a 189.000 niñas, niños y adolescentes que en 2025 mejoraron sus condiciones de vida. Cada mes que decides apoyar, tu esfuerzo se convierte en oportunidades reales para nuestros pequeños.'},
+    f3:{titulo:'Propuesta escalonada',subtitulo:'Primero disminución. Si rechaza, pausa. Nunca al revés.',
+      disminucion1:'[Nombre], antes de tomar una decisión definitiva, ¿podríamos ajustar tu aporte a un monto menor? Lo que sea cómodo para ti ahora mismo — incluso un monto mínimo sigue llegando a nuestros pequeños.',
+      disminucion2:'[Nombre], entiendo. ¿Qué tal si lo dejamos en el monto más bajo posible por ahora? Así mantienes ese vínculo con los niños que ya has apoyado, sin que represente una carga para ti.',
+      cierre:'[Nombre], lo entendemos y procesamos tu solicitud con gusto. Tu generosidad llegó a niños reales en situaciones muy difíciles. Cuando las cosas mejoren, aquí te esperamos con los brazos abiertos. ¡Mucha fuerza!'},
+    arbol:{pregunta:'¿Cómo reacciona el donante al mensaje de empatía?',
+      ramas:[
+        {cond:'si',label:'✅ Se abre / agradece',accion:'Pasa a Fase 2 — sensibilización. Luego ofrece la disminución de monto.'},
+        {cond:'duda',label:'⏳ Responde brevemente',accion:'Profundiza: "¿Cómo estás llevando esta situación?" Antes de proponer nada.'},
+        {cond:'no',label:'❌ Va directo a cancelar',accion:'Respeta su urgencia. Ofrece disminución. Si rechaza, ofrece pausa. Si insiste, cierra con calidez.'}
+      ]}
+  },
+  {
+    id:'economia', emoji:'💸', nombre:'Dificultad económica',
+    color:'#E2231A', colorClaro:'#FDE8E7',
+    nivel:'amarillo', nivelIcon:'🟡', nivelLabel:'Medio',
+    desc:'Tiene trabajo pero sus gastos superan sus posibilidades. El objetivo es encontrar el monto que sí puede pagar.',
+    keywords:['dificultades economicas','dificultades económicas','no me alcanza','gastos','crisis economica','crisis económica','financial difficulties','cant afford','muy caro','reducir gastos','ajustar presupuesto','plata','no tengo dinero','muy ajustado','deudas','no puedo pagar','no me da el presupuesto','presupuesto','no me sobra','no alcanzo','struggling financially','tight budget','no puedo pagar','ya no puedo costear','money issues'],
+    alerta:'🔑 Esta persona quiere seguir ayudando — solo necesita encontrar un monto que le funcione. Deja que ella proponga.',
+    f1:{titulo:'Validar con comprensión',subtitulo:'Muéstrale que su bienestar también importa.',
+      h:'[Nombre], gracias por contarnos. Sabemos que los momentos de ajuste económico son difíciles, y te agradecemos que nos lo hayas dicho. Queremos encontrar juntos una solución que funcione para ti.',
+      m:'[Nombre], gracias por escribirnos. Entendemos que hay momentos en que reorganizar las finanzas es necesario, y lo respetamos. Tu bienestar también importa para nosotros.'},
+    f2:{titulo:'Sensibilización — Con tu apoyo hemos llegado muy lejos',subtitulo:'Resalta lo que su aporte ha logrado.',
+      h:'[Nombre], gracias a tu aporte hemos podido realizar 11.332 evaluaciones nutricionales a niñas y niños en zonas rurales, detectando a tiempo riesgos de desnutrición que pueden cambiar el curso de una vida. Tu contribución, incluso si es menor, sigue siendo parte de ese impacto.',
+      m:'[Nombre], gracias a tu generosidad hemos podido llegar a 95.474 personas con agua limpia, saneamiento y educación en higiene durante emergencias. Cada aporte tuyo protege la salud de familias enteras — y eso no cambia con el monto.'},
+    f3:{titulo:'Propuesta escalonada',subtitulo:'Primero pregunta cuánto puede. Luego ofrece cambio de fecha.',
+      disminucion1:'[Nombre], antes de hacer cualquier cambio: ¿hay un monto mensual que sí se sienta cómodo para ti ahora, aunque sea menor? No existe una cifra mínima que valga más que otra.',
+      disminucion2:'[Nombre], entiendo que la situación está difícil. ¿Qué tal dejarlo en el mínimo disponible por ahora? Así tu impacto no se interrumpe y tú no sientes el peso.',
+      cierre:'Entendemos perfectamente, [Nombre]. Si en algún momento las cosas cambian, aquí estaremos. Gracias de corazón por todo el apoyo que ya brindaste.'},
+    arbol:{pregunta:'¿Cómo responde cuando le preguntas por un monto cómodo?',
+      ramas:[
+        {cond:'si',label:'✅ Propone un monto',accion:'¡Retención lograda! Acepta el monto, confirma el cambio y agradece con calidez.'},
+        {cond:'duda',label:'🤔 No sabe cuánto',accion:'Sugiere cambiar la fecha de cobro. Si sigue dudando, ofrece pausa de 2 meses.'},
+        {cond:'no',label:'❌ Dice que no puede nada',accion:'Ofrece pausa de 2 meses. Si rechaza, cierra con gratitud y puerta abierta.'}
+      ]}
+  },
+  {
+    id:'viaje', emoji:'✈️', nombre:'Viaje al exterior',
+    color:'#8B5CF6', colorClaro:'#F3EFFE',
+    nivel:'verde', nivelIcon:'🟢', nivelLabel:'Fácil',
+    desc:'Casi siempre es un malentendido — el donante cree que su donación no funcionará fuera del país.',
+    keywords:['viajo','viaje','me voy del pais','me voy del país','me mudo','traveling','voy a viajar','salgo del pais','salgo del país','me voy a vivir afuera','exterior','extranjero','me voy al exterior','voy a otro pais','voy a otro país','me traslado','living abroad','moving abroad','i am leaving','relocating'],
+    alerta:'✈️ La causal más fácil de retener. El donante no quiere cancelar — quiere hacer las cosas bien.',
+    f1:{titulo:'Aclarar con alegría — No necesita hacer nada',subtitulo:'Directo, cálido y tranquilizador.',
+      h:'¡[Nombre], no te preocupes! Tu donación es completamente automática y funciona desde cualquier lugar del mundo. Los niños en Colombia seguirán recibiendo tu apoyo sin importar dónde estés.',
+      m:'¡[Nombre], qué bueno que nos avisas! La donación es automática y funciona desde cualquier país. No necesitas hacer nada — los niños y niñas seguirán contando contigo estés donde estés.'},
+    f2:{titulo:'Sensibilización — Tu apoyo viaja contigo',subtitulo:'Aunque esté lejos, su aporte sigue llegando.',
+      h:'[Nombre], aunque estés en otro país, gracias a tu aporte hemos podido llegar a 189.162 niñas, niños y adolescentes en 12 departamentos durante emergencias. Tu compromiso no tiene fronteras — y nuestros pequeños siguen contando contigo.',
+      m:'[Nombre], la distancia no reduce el impacto de tu generosidad. Gracias a tu esfuerzo, 189.000 niñas, niños y adolescentes mejoraron sus condiciones de vida en 2025. Tu apoyo cruza fronteras y llega a quienes más lo necesitan.'},
+    f3:{titulo:'Verificación y cierre positivo',subtitulo:'Solo verifica el método de pago.',
+      disminucion1:'Solo te pido verificar con tu banco que tu tarjeta o cuenta registrada seguirá activa durante el viaje. Si hay algún cambio, con gusto te ayudamos a actualizarla. ¿Todo en orden?',
+      disminucion2:'Si el viaje es permanente y prefieres ajustar el monto, con gusto lo hacemos. ¿Qué sería cómodo para ti desde el exterior?',
+      cierre:'¡Que tengas un excelente viaje, [Nombre]! Gracias por seguir siendo parte de esta causa estés donde estés. 🌍'},
+    arbol:{pregunta:'¿Qué tipo de viaje es?',
+      ramas:[
+        {cond:'si',label:'✅ Temporal',accion:'Retención en 1-2 mensajes. Aclara automaticidad + verifica método de pago.'},
+        {cond:'duda',label:'🤔 No sabe cuánto tiempo',accion:'Ofrece pausar durante la ausencia y reactivar al regresar.'},
+        {cond:'no',label:'🌍 Permanente',accion:'Ofrece actualizar método de pago o ajustar el monto desde el exterior.'}
+      ]}
+  },
+  {
+    id:'unica', emoji:'🎁', nombre:'Aportó por única vez',
+    color:'#F5A623', colorClaro:'#FFF8EC',
+    nivel:'amarillo', nivelIcon:'🟡', nivelLabel:'Medio',
+    desc:'El donante no entendió que era recurrente. No confrontes — acepta y muestra el valor de continuar.',
+    keywords:['una sola vez','solo quise donar una vez','única vez','unica vez','one time donation','no sabia que era mensual','no sabía que era mensual','no queria suscribirme','no quería suscribirme','solo fue un aporte','donacion unica','donación única','pensé que era una sola vez','no quiero suscripcion','no quiero suscripción','no quiero pago mensual','fue un error','me suscribi sin querer','i thought it was one time'],
+    alerta:'🎯 No discutas si entendió o no. Acepta con gracia y muestra lo que ya logró.',
+    f1:{titulo:'Aceptar sin confrontar',subtitulo:'Agradece el gesto y pide permiso para compartir algo.',
+      h:'[Nombre], muchas gracias por contactarnos. Entendemos perfectamente. Antes de procesar el cambio, ¿me permites contarte brevemente el impacto que tu aporte ya ha tenido en la vida de nuestros pequeños?',
+      m:'[Nombre], gracias por escribirnos. Lo entendemos completamente. Antes de hacer cualquier cambio, me gustaría compartirte algo que creo que te va a interesar. ¿Me das un momento?'},
+    f2:{titulo:'Sensibilización — Tu aporte ya cambió vidas',subtitulo:'Muestra lo que su contribución ya logró.',
+      h:'[Nombre], gracias a tu esfuerzo, 7.598 niñas y niños desplazados recuperaron el acceso a la educación. Tu aporte hizo posible que una oportunidad no se perdiera — y eso puede cambiar toda una vida. ¿Nos das la posibilidad de seguir juntos en esto?',
+      m:'[Nombre], gracias a tu generosidad, 25.510 niñas y niños de 0 a 5 años accedieron a educación formal, incluso en medio de emergencias. Tu contribución llegó a los más pequeños en sus primeros años — los más importantes de su vida. ¿Nos dejas seguir acompañándolos juntos?'},
+    f3:{titulo:'Propuesta escalonada',subtitulo:'Ofrece flexibilidad total.',
+      disminucion1:'[Nombre], ¿qué te parece si ajustamos el monto a algo que se sienta cómodo para ti? Puede ser lo que quieras — lo importante es que ese vínculo con nuestros pequeños continúe.',
+      disminucion2:'[Nombre], podemos dejarlo en el monto más pequeño disponible. Así el compromiso es mínimo pero el impacto es real. ¿Te parece?',
+      cierre:'Entendemos completamente, [Nombre]. Gracias de corazón por tu generosidad. Si en algún momento quieres volver a ser parte de esto, las puertas estarán siempre abiertas.'},
+    arbol:{pregunta:'¿Cómo reacciona al escuchar el impacto de su aporte?',
+      ramas:[
+        {cond:'si',label:'✅ Se emociona',accion:'Retención lograda. Confirma continuidad o ajusta el monto.'},
+        {cond:'duda',label:'🤔 Duda',accion:'Ofrece pausa de 1 mes: "Tómate el tiempo que necesites."'},
+        {cond:'no',label:'❌ Insiste en cancelar',accion:'Cierra con gratitud y comparte cómo puede volver a donar.'}
+      ]}
+  },
+  {
+    id:'agotamiento', emoji:'😔', nombre:'Ya no puede más',
+    color:'#00A651', colorClaro:'#E6F7EF',
+    nivel:'rojo', nivelIcon:'🔴', nivelLabel:'Difícil',
+    desc:'Desmotivación o agotamiento emocional. Suele esconder: "No me siento reconocido", "No veo el impacto".',
+    keywords:['ya no puedo mas','ya no puedo más','estoy cansado','estoy cansada','no veo resultados','no siento que ayude','no sirve','desmotivado','desmotivada','ya no quiero seguir','perdi la fe','perdí la fe','no creo que ayude','para que sirve','para qué sirve','no tiene sentido','ya no me motiva','ya no me llena','perdí el interés','ya no me interesa','quiero cancelar','quiero darme de baja','tal vez mas adelante','tal vez más adelante','quizás después','maybe later','en otro momento','cuando mejore','cuando cambie','por ahora no','por el momento no','not right now','yo me comunico','me comunico','lo pienso','dejame pensar','déjame pensar','ya veremos'],
+    alerta:'💙 Necesita reconexión emocional. Primero entiende qué hay detrás del agotamiento.',
+    f1:{titulo:'Escuchar antes de proponer',subtitulo:'Una pregunta abierta que te da la clave.',
+      h:'[Nombre], lamentamos mucho escucharte así. Para nosotros es muy importante entender cómo te has sentido. ¿Hubo algo en particular que haya cambiado tu experiencia con UNICEF?',
+      m:'[Nombre], lamentamos escucharte así. Tu opinión nos importa mucho. ¿Hubo algo que sintieras que no estaba funcionando como esperabas en tu experiencia con nosotros?'},
+    f2:{titulo:'Sensibilización — Lo que hemos logrado juntos',subtitulo:'Reconoce su trayectoria y muestra el impacto.',
+      h:'[Nombre], gracias a tu compromiso y al de personas como tú, hemos podido brindar apoyo psicosocial y atención en salud mental a 10.794 niñas y niños que lo necesitaban. Tu esfuerzo ha sido parte de ese abrazo — y nuestros pequeños lo siguen necesitando.',
+      m:'[Nombre], gracias a tu generosidad y dedicación, 507 niñas y niños pudieron acceder a rutas de protección que cambiaron el curso de sus vidas. Tu aporte ha sido un escudo para ellas. ¿Nos dejas seguir protegiéndolas juntas?'},
+    f3:{titulo:'Propuesta escalonada',subtitulo:'Pausa + reconexión con información de impacto.',
+      disminucion1:'[Nombre], ¿podríamos reducir tu aporte a un monto menor por ahora? Así alivias el peso del compromiso pero nuestros pequeños no pierden ese apoyo que tú les das.',
+      disminucion2:'[Nombre], entiendo. ¿Qué tal el monto mínimo disponible? Es casi simbólico, pero mantiene ese vínculo vivo — y cuando te sientas listo/a, puedes aumentarlo cuando quieras.',
+      cierre:'[Nombre], respetamos tu decisión y te agradecemos profundamente por todo este tiempo. Tu aporte llegó a niños reales y eso nunca va a cambiar. Gracias de corazón.'},
+    arbol:{pregunta:'¿Cuál parece ser la raíz del agotamiento?',
+      ramas:[
+        {cond:'si',label:'😞 No ve el impacto',accion:'Comparte datos reales y ofrece suscribirlo a actualizaciones.'},
+        {cond:'duda',label:'🫂 Se siente ignorado/a',accion:'Reconoce su lealtad con su nombre. Ofrece pausa + reconocimiento.'},
+        {cond:'no',label:'🔄 Cambió de prioridades',accion:'Respeta con dignidad. Cierra con gratitud y puerta abierta.'},
+        {cond:'otro',label:'💭 No sabe explicarlo',accion:'Ofrece pausa de 1 mes como tiempo para pensarlo.'}
+      ]}
+  },
+  {
+    id:'noreconoce', emoji:'❓', nombre:'No reconoce el cobro',
+    color:'#F97316', colorClaro:'#FFF0E6',
+    nivel:'amarillo', nivelIcon:'🟡', nivelLabel:'Medio',
+    desc:'El donante ve un débito y no lo recuerda. Es confusión, no rechazo — manejada bien, fortalece el vínculo.',
+    keywords:['no reconozco el cobro','no reconozco el cargo','no autorize','no autoricé','cobro desconocido','cargo desconocido','que es este cobro','qué es este cobro','de donde sale este cobro','no recuerdo haber donado','fraude','me robaron','unauthorized charge','unknown charge','i did not authorize','quiénes son ustedes','quienes son ustedes','me están cobrando sin permiso','cobro sin permiso','no pedí esto','no reconozco el pago','no recuerdo este pago'],
+    alerta:'⚠️ Nunca te pongas a la defensiva. Primero tranquiliza, luego aclara. Si menciona fraude, escala a soporte.',
+    f1:{titulo:'Tranquilizar y acompañar',subtitulo:'Valida su preocupación antes de explicar nada.',
+      h:'[Nombre], muchas gracias por contactarnos. Entiendo perfectamente que puede ser desconcertante ver un cargo que no recuerdas. Vamos a aclarar esto juntos ahora mismo.',
+      m:'[Nombre], gracias por escribirnos. Qué bien que estés revisando tus movimientos. Tranquila, vamos a aclarar esto juntos de inmediato.'},
+    f2:{titulo:'Aclarar y reconectar con impacto',subtitulo:'Primero explica el cobro. Luego muestra el impacto.',
+      h:'El cobro que ves corresponde a tu donación mensual a UNICEF Colombia — puede aparecer como "UNICEF" o "Fondo de las Naciones Unidas". ¿Cómo aparece exactamente en tu extracto? — Y quiero que sepas que gracias a tu aporte, 19.700 niños accedieron a servicios esenciales de salud, incluyendo vacunación. Tu contribución ha protegido vidas reales.',
+      m:'El cargo es tu donación mensual a UNICEF Colombia. Puede aparecer como "UNICEF" o "Fondo de las Naciones Unidas". ¿Puedes decirme cómo aparece para confirmártelo? — Gracias a tu generosidad, hemos llegado a 189.000 niñas y niños que mejoraron sus condiciones de vida en 2025.'},
+    f3:{titulo:'Propuesta según reacción',subtitulo:'Si lo recuerda: celebra. Si quiere cancelar: cierra con calidez.',
+      disminucion1:'[Nombre], si prefieres ajustar el monto a algo más cómodo, con gusto lo hacemos. ¿Qué cantidad se sentiría bien para ti ahora mismo?',
+      disminucion2:'[Nombre], podemos dejarlo en el monto mínimo. Así el impacto continúa y tú decides cuándo subirlo de nuevo.',
+      cierre:'Entendemos perfectamente, [Nombre]. Procesamos tu solicitud con gusto. Gracias por tu generosidad — tu aporte llegó a niños reales. Si algún día quieres retomar, aquí estaremos.'},
+    arbol:{pregunta:'¿Cómo reacciona al aclarar el cobro?',
+      ramas:[
+        {cond:'si',label:'✅ Lo recuerda / acepta',accion:'Retención lograda. Reconecta con el impacto y cierra con gratitud.'},
+        {cond:'duda',label:'🤔 Sigue sin recordar',accion:'Pídele el extracto o revisa juntos la fecha. Comparte impacto.'},
+        {cond:'no',label:'❌ Quiere cancelar igual',accion:'Procesa con gracia. Cierra cálido. No insistas.'},
+        {cond:'otro',label:'⚠️ Menciona fraude',accion:'Escala inmediatamente al equipo de soporte.'}
+      ]}
+  },
+  {
+    id:'otraorg', emoji:'🔄', nombre:'Quiere donar a otra organización',
+    color:'#0083C4', colorClaro:'#E8F6FD',
+    nivel:'rojo', nivelIcon:'🔴', nivelLabel:'Difícil',
+    desc:'El donante quiere redirigir su apoyo. Sigue queriendo ayudar — eso es una ventaja enorme.',
+    keywords:['otra organizacion','otra organización','otra fundacion','otra fundación','otra causa','otro proyecto','otro programa','quiero apoyar otra cosa','voy a donar a otro lado','cambie de causa','cambié de causa','different charity','another organization','another cause','switching to','i want to support another','otro lugar','decidí apoyar otra','me interesa otra','prefiero otra','quiero cambiarme','me cambio de organizacion','encontré otra organización','quiero redirigir','i prefer another'],
+    alerta:'💚 Este donante no se cansó de dar — se cansó de dar aquí. Muestra el impacto único de UNICEF sin competir.',
+    f1:{titulo:'Admirar su generosidad — Sin competir',subtitulo:'Valida su deseo de dar.',
+      h:'[Nombre], lo primero que quiero decirte es que es admirable que sigas queriendo apoyar causas importantes. El mundo necesita más personas como tú. Entendemos que quieras explorar otras opciones y lo respetamos.',
+      m:'[Nombre], es muy valioso que sigas comprometida con hacer el bien. Entendemos que quieras explorar otras opciones y lo respetamos. ¿Me permites preguntarte algo antes de procesar el cambio?'},
+    f2:{titulo:'Sensibilización — Lo que hemos construido juntos es único',subtitulo:'Diferencia sin atacar.',
+      h:'[Nombre], gracias a tu aporte y al de personas como tú, hemos acompañado a 36.000 adolescentes y jóvenes en espacios de toma de decisiones donde su voz realmente importa. Tu contribución ha construido liderazgo y futuro para nuestros jóvenes — algo que muy pocas organizaciones pueden lograr.',
+      m:'[Nombre], gracias a tu generosidad, 507 niñas y niños pudieron acceder a rutas de protección que los blindaron frente a situaciones de violencia. Tu esfuerzo ha sido un escudo real para ellas — y ese impacto es único en Colombia.'},
+    f3:{titulo:'Propuesta escalonada',subtitulo:'Primero: las dos donaciones. Luego: monto mínimo.',
+      disminucion1:'[Nombre], ¿qué te parece mantener las dos donaciones? Podrías apoyar también la otra causa con un monto reducido aquí. Hay personas que apoyan varias porque cada una cubre una necesidad diferente — y tu aporte a UNICEF seguiría llegando a nuestros pequeños.',
+      disminucion2:'[Nombre], podemos dejar tu aporte a UNICEF en un monto mínimo simbólico. Así mantienes ese vínculo con los niños que ya has apoyado.',
+      cierre:'[Nombre], respetamos completamente tu decisión. Ha sido un privilegio contar contigo. Si algún día quieres regresar, aquí estaremos con los brazos abiertos. ¡Gracias de corazón!'},
+    arbol:{pregunta:'¿Por qué quiere cambiar de organización?',
+      ramas:[
+        {cond:'si',label:'💚 Le llama más otra causa',accion:'Propón las dos donaciones juntas con montos reducidos.'},
+        {cond:'duda',label:'😔 No ve el impacto de UNICEF',accion:'Comparte datos reales. Ofrece suscribirlo a actualizaciones.'},
+        {cond:'no',label:'💸 Quiere concentrar en una',accion:'Acepta con gracia. Propón monto mínimo.'},
+        {cond:'otro',label:'🤐 No quiere dar razones',accion:'No insistas. Comparte brevemente el impacto y deja que decida.'}
+      ]}
+  }
+];
+
+// ============================================================
+// RENDER DE PANELES
+// ============================================================
+function renderCausal(d) {
+  return `
+  <div class="causal-header" style="border-left-color:${d.color};">
+    <div class="causal-title">
+      <span class="causal-emoji">${d.emoji}</span>
+      <h2>${d.nombre}</h2>
+      <span class="semaforo ${d.nivel}">${d.nivelIcon} ${d.nivelLabel}</span>
+    </div>
+    <p class="causal-desc">${d.desc}</p>
+  </div>
+  <div class="alert amarillo"><strong>${d.alerta}</strong></div>
+
+  <div class="fase">
+    <div class="fase-header"><span class="fase-badge f1">Fase 1</span>
+      <div><div class="fase-title">${d.f1.titulo}</div><div class="fase-subtitle">${d.f1.subtitulo}</div></div>
+    </div>
+    <div class="gender-toggle">
+      <button class="g-btn active" onclick="toggleGender(this,'g1h-${d.id}','g1m-${d.id}')">👨 Hombre</button>
+      <button class="g-btn" onclick="toggleGender(this,'g1m-${d.id}','g1h-${d.id}')">👩 Mujer</button>
+    </div>
+    <div id="g1h-${d.id}" class="gender-content active">
+      <div class="msg empatia"><div class="msg-label azul">💙 Empatía</div>
+        <div class="msg-text" id="f1h-${d.id}"></div>
+        <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+    </div>
+    <div id="g1m-${d.id}" class="gender-content">
+      <div class="msg empatia"><div class="msg-label azul">💙 Empatía</div>
+        <div class="msg-text" id="f1m-${d.id}"></div>
+        <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="fase-header"><span class="fase-badge f2">Fase 2</span>
+      <div><div class="fase-title">${d.f2.titulo}</div><div class="fase-subtitle">${d.f2.subtitulo}</div></div>
+    </div>
+    <div class="gender-toggle">
+      <button class="g-btn active" onclick="toggleGender(this,'g2h-${d.id}','g2m-${d.id}')">👨 Hombre</button>
+      <button class="g-btn" onclick="toggleGender(this,'g2m-${d.id}','g2h-${d.id}')">👩 Mujer</button>
+    </div>
+    <div id="g2h-${d.id}" class="gender-content active">
+      <div class="msg sensi"><div class="msg-label lila">💜 Sensibilización</div>
+        <div class="msg-text" id="f2h-${d.id}"></div>
+        <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+    </div>
+    <div id="g2m-${d.id}" class="gender-content">
+      <div class="msg sensi"><div class="msg-label lila">💜 Sensibilización</div>
+        <div class="msg-text" id="f2m-${d.id}"></div>
+        <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="fase-header"><span class="fase-badge f3">Fase 3</span>
+      <div><div class="fase-title">${d.f3.titulo}</div><div class="fase-subtitle">Despliega cada opción en orden.</div></div>
+    </div>
+    <div class="f3-container">
+      <div class="f3-option active">
+        <button class="f3-trigger" onclick="toggleF3(this)">
+          <span class="f3-trigger-icon">💚</span>
+          <span class="f3-trigger-label"><div class="f3-trigger-title">Opción 1 — Disminución de monto</div><div class="f3-trigger-sub">Intenta 2 veces antes de pasar a pausa</div></span>
+          <span class="f3-trigger-arrow open">▼</span>
+        </button>
+        <div class="f3-body open">
+          <div class="attempt-label">🔵 Primer intento</div>
+          <div class="msg propuesta"><div class="msg-label verde">💚 Intento 1</div>
+            <div class="msg-text" id="d1-${d.id}"></div>
+            <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+          <div class="f3-connector">Si rechaza →</div>
+          <div class="attempt-label">🔵 Segundo intento</div>
+          <div class="msg propuesta"><div class="msg-label verde">💚 Intento 2</div>
+            <div class="msg-text" id="d2-${d.id}"></div>
+            <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+        </div>
+      </div>
+      <div class="f3-connector" style="padding-left:12px;">Si rechaza las 2 veces →</div>
+      <div class="f3-option warn">
+        <button class="f3-trigger" onclick="toggleF3(this)">
+          <span class="f3-trigger-icon">⏸️</span>
+          <span class="f3-trigger-label"><div class="f3-trigger-title">Opción 2 — Pausa escalonada</div><div class="f3-trigger-sub">1, 2, 3 o 4 meses</div></span>
+          <span class="f3-trigger-arrow">▼</span>
+        </button>
+        <div class="f3-body">
+          <div class="sub-tabs">
+            <button class="sub-tab active" onclick="switchPausa(this,'${d.id}',1)">⏸️ 1 mes</button>
+            <button class="sub-tab" onclick="switchPausa(this,'${d.id}',2)">⏸️ 2 meses</button>
+            <button class="sub-tab" onclick="switchPausa(this,'${d.id}',3)">⏸️ 3 meses</button>
+            <button class="sub-tab" onclick="switchPausa(this,'${d.id}',4)">⏸️ 4 meses</button>
+          </div>
+          <div id="pausa-${d.id}-1" class="sub-content active">
+            <div class="msg" style="border-left:3px solid var(--amarillo);background:var(--amarillo-claro);">
+              <div class="msg-label" style="color:#B87300;">⏸️ Pausa 1 mes</div>
+              <div class="msg-text">"[Nombre], entiendo. ¿Qué te parece si pausamos tu donación solo 1 mes? Así te das un respiro sin perder ese lazo con los niños que ya estás apoyando."</div>
+              <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+          </div>
+          <div id="pausa-${d.id}-2" class="sub-content">
+            <div class="msg" style="border-left:3px solid var(--amarillo);background:var(--amarillo-claro);">
+              <div class="msg-label" style="color:#B87300;">⏸️ Pausa 2 meses</div>
+              <div class="msg-text">"[Nombre], sin problema. ¿Te parece si la pausamos 2 meses? Eso te da más espacio para reorganizarte, y los niños seguirán esperando tu regreso."</div>
+              <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+          </div>
+          <div id="pausa-${d.id}-3" class="sub-content">
+            <div class="msg" style="border-left:3px solid var(--amarillo);background:var(--amarillo-claro);">
+              <div class="msg-label" style="color:#B87300;">⏸️ Pausa 3 meses</div>
+              <div class="msg-text">"[Nombre], con gusto. Podemos pausarla 3 meses — un trimestre completo para que te reorganices con calma. ¿Eso te funcionaría?"</div>
+              <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+          </div>
+          <div id="pausa-${d.id}-4" class="sub-content">
+            <div class="msg" style="border-left:3px solid var(--amarillo);background:var(--amarillo-claro);">
+              <div class="msg-label" style="color:#B87300;">⏸️ Pausa 4 meses</div>
+              <div class="msg-text">"[Nombre], te ofrecemos pausar hasta 4 meses — la pausa máxima. Así tienes todo un periodo para estabilizarte. ¿Te parece bien?"</div>
+              <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="f3-connector" style="padding-left:12px;">Si rechaza todas las pausas →</div>
+      <div class="f3-option info">
+        <button class="f3-trigger" onclick="toggleF3(this)">
+          <span class="f3-trigger-icon">📅</span>
+          <span class="f3-trigger-label"><div class="f3-trigger-title">Opción 3 — Bimensualidad</div><div class="f3-trigger-sub">Débito cada 2 meses</div></span>
+          <span class="f3-trigger-arrow">▼</span>
+        </button>
+        <div class="f3-body">
+          <div class="msg" style="border-left:3px solid var(--azul);background:var(--azul-fondo);">
+            <div class="msg-label azul">📅 Bimensualidad</div>
+            <div class="msg-text">"[Nombre], tenemos una opción que quizás no conoces: podemos cambiar tu donación a bimensual — débito cada 2 meses. Tu impacto sigue siendo real pero el compromiso mensual desaparece. ¿Te gustaría intentarlo?"</div>
+            <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+        </div>
+      </div>
+      <div class="f3-connector" style="padding-left:12px;">Si rechaza todo →</div>
+      <div class="f3-option close">
+        <button class="f3-trigger" onclick="toggleF3(this)">
+          <span class="f3-trigger-icon">❤️</span>
+          <span class="f3-trigger-label"><div class="f3-trigger-title">Cierre cálido — Puerta abierta</div><div class="f3-trigger-sub">Solo cuando rechaza absolutamente todo</div></span>
+          <span class="f3-trigger-arrow">▼</span>
+        </button>
+        <div class="f3-body">
+          <div class="msg cierre"><div class="msg-label rojo">❤️ Cierre</div>
+            <div class="msg-text" id="cierre-${d.id}"></div>
+            <button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">Árbol de decisiones</p>
+  <div class="tree">
+    <div class="tree-title">🌳 ${d.arbol.pregunta}</div>
+    <div class="tree-branches">
+      ${d.arbol.ramas.map(r=>`
+      <div class="tree-branch">
+        <span class="b-cond ${r.cond}">${r.label}</span>
+        <span class="b-action">${r.accion}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// Render con textContent para seguridad
+function renderPanel(d) {
+  const el = document.getElementById('panel-' + d.id);
+  if (!el) return;
+  el.innerHTML = renderCausal(d);
+  // Asignar textos con textContent
+  var setTC = function(id, val) {
+    var e = document.getElementById(id);
+    if (e && val) e.textContent = '"' + val + '"';
+  };
+  setTC('f1h-' + d.id, d.f1.h);
+  setTC('f1m-' + d.id, d.f1.m);
+  setTC('f2h-' + d.id, d.f2.h);
+  setTC('f2m-' + d.id, d.f2.m);
+  setTC('d1-'  + d.id, d.f3.disminucion1);
+  setTC('d2-'  + d.id, d.f3.disminucion2);
+  setTC('cierre-' + d.id, d.f3.cierre);
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tabs>.tab').forEach(function(t) { t.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function irA(id) {
+  var tabs = document.querySelectorAll('.tabs>.tab');
+  var target = null;
+  tabs.forEach(function(t) {
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'" + id + "'") !== -1) target = t;
+  });
+  showPanel(id, target);
+}
+
+function toggleGender(btn, showId, hideId) {
+  var parent = btn.closest('.fase');
+  if (!parent) return;
+  parent.querySelectorAll('.g-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var show = document.getElementById(showId);
+  var hide = document.getElementById(hideId);
+  if (show) show.classList.add('active');
+  if (hide) hide.classList.remove('active');
+}
+
+function toggleF3(btn) {
+  var option = btn.closest('.f3-option');
+  if (!option) return;
+  var body = option.querySelector('.f3-body');
+  var arrow = btn.querySelector('.f3-trigger-arrow');
+  if (!body || !arrow) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function switchPausa(btn, id, months) {
+  var container = btn.closest('.f3-body');
+  if (!container) return;
+  container.querySelectorAll('.sub-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('pausa-' + id + '-' + i);
+    if (el) el.classList.toggle('active', i === months);
+  }
+}
+
+function copiarMsg(btn) {
+  var prev = btn.previousElementSibling;
+  if (!prev) return;
+  var txt = prev.textContent.replace(/^"|"$/g, '');
+  navigator.clipboard.writeText(txt).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  var t = document.getElementById('toast');
+  if (t) { t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2000); }
+}
+
+function copiarTexto(btn) { copiarMsg(btn); }
+
+// ============================================================
+// CONTADOR DE RETENCIONES
+// ============================================================
+var retenciones = 0;
+try { retenciones = parseInt(localStorage.getItem('ret_count') || '0') || 0; } catch(e) {}
+
+function actualizarContador() {
+  var el = document.getElementById('ret-count');
+  var bar = document.getElementById('ret-bar');
+  var msg = document.getElementById('ret-msg');
+  if (!el || !bar) return;
+  el.textContent = retenciones;
+  bar.style.width = Math.min((retenciones / 8) * 100, 100) + '%';
+  for (var i = 1; i <= 8; i++) {
+    var s = document.getElementById('s' + i);
+    if (s) s.classList.toggle('earned', i <= retenciones);
+  }
+  var msgs = ['¡Vamos, tú puedes! 💙','¡Buen comienzo! 🌱','¡Vas bien! 💪','¡Ya casi la mitad! 🔥','¡Mitad del camino! ⭐','¡Más de la mitad! 🚀','¡Solo te faltan 2! 💫','¡Una más para la meta! 🎯','🎉 ¡Meta alcanzada!'];
+  if (msg) msg.textContent = msgs[Math.min(retenciones, 8)];
+  bar.style.background = retenciones >= 8 ? '#FFD700' : retenciones >= 5 ? '#4ADE80' : '#60A5FA';
+}
+
+function cambiarRetencion(delta) {
+  retenciones = Math.max(0, Math.min(8, retenciones + delta));
+  try { localStorage.setItem('ret_count', retenciones); } catch(e) {}
+  actualizarContador();
+  var toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = retenciones >= 8 ? '🎉 ¡Meta alcanzada!' : '✅ ¡Retención registrada! 💙';
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); toast.textContent = '✅ Mensaje copiado'; }, 2000);
+  }
+}
+
+// ============================================================
+// DETECTOR DE IDIOMA
+// ============================================================
+var palabrasEN = ['i ','my ','the ','is ','are ','was ','have ','has ','lost','job','payment','charge','donation','cancel','stop','leave','moving','travel','month','money','organization','charity','afford','unemployed','fired'];
+var idiomaActivo = 'es';
+
+function detectarIdioma(texto) {
+  if (!texto) return 'es';
+  var norm = texto.toLowerCase();
+  var score = 0;
+  palabrasEN.forEach(function(w) { if (norm.indexOf(w) !== -1) score++; });
+  return score >= 2 ? 'en' : 'es';
+}
+
+function mostrarDetectorIdioma(idioma) {
+  var bar = document.getElementById('lang-bar');
+  if (!bar) return;
+  if (idioma === 'en') {
+    bar.classList.add('visible');
+    idiomaActivo = 'en';
+  } else {
+    bar.classList.remove('visible');
+    idiomaActivo = 'es';
+  }
+}
+
+// ============================================================
+// BUSCADOR ROBUSTO
+// ============================================================
+var palabrasDebiles = ['no','puedo','quiero','ayuda','ahora','problema','tengo','necesito','favor','please','help','can','want','need','have','not','the','and','for','but','that','this','muy','mas','más','ya','me','mi','tu','su','un','una','con','por','para'];
+
+function buscar() {
+  try {
+    var campoDonante = document.getElementById('donor-input');
+    var res = document.getElementById('resultado');
+    if (!campoDonante || !res) return;
+
+    var inputRaw = campoDonante.value || '';
+    if (inputRaw.trim().length === 0) {
+      res.innerHTML = '';
+      return;
+    }
+
+    var input = normalizarTexto(inputRaw);
+
+    // Detector de idioma
+    mostrarDetectorIdioma(detectarIdioma(inputRaw));
+
+    // Construir lista de todas las causales
+    var todasCausales = DB.slice();
+    causales.forEach(function(c) {
+      var kwsRaw = normalizarTexto(c.frase || '').split(/\s+/).filter(function(w) { return w.length > 4; });
+      todasCausales.push({
+        id: 'custom-' + c.id,
+        emoji: c.emoji || '💬',
+        nombre: c.title || 'Personalizada',
+        nivel: 'amarillo', nivelIcon: '🟡', nivelLabel: 'Personalizada',
+        keywords: kwsRaw,
+        f1: { h: c.empatia || '', m: c.empatia || '' },
+        f2: { h: '', m: '' },
+        f3: { disminucion1: c.propuesta || '', disminucion2: '', cierre: '' },
+        arbol: { pregunta: '', ramas: [] },
+        esCustom: true
+      });
+    });
+
+    var resultados = [];
+
+    todasCausales.forEach(function(causal) {
+      try {
+        var palabrasClave = Array.isArray(causal.keywords) ? causal.keywords : [];
+        if (palabrasClave.length === 0) return;
+
+        var puntaje = 0;
+        var coincidencias = [];
+
+        var kwOrdenadas = palabrasClave.slice().sort(function(a, b) { return String(b).length - String(a).length; });
+
+        kwOrdenadas.forEach(function(kw) {
+          if (!kw || typeof kw !== 'string') return;
+          var kwNorm = normalizarTexto(kw);
+          if (!kwNorm || kwNorm.length < 3) return;
+
+          var palabras = kwNorm.split(/\s+/);
+          var esFrase = palabras.length > 1;
+          var esDebil = palabras.every(function(p) { return palabrasDebiles.indexOf(p) !== -1; });
+          if (esDebil) return;
+
+          if (input.indexOf(kwNorm) !== -1) {
+            var pts = esFrase ? Math.min(kwNorm.length * 2, 40) : 5;
+            puntaje += pts;
+            coincidencias.push({ texto: kw, puntos: pts });
+          }
+        });
+
+        if (puntaje > 0) {
+          resultados.push({ causal: causal, puntaje: puntaje, coincidencias: coincidencias });
+        }
+      } catch(errC) {
+        console.warn('Error procesando causal:', causal.id, errC);
+      }
+    });
+
+    resultados.sort(function(a, b) { return b.puntaje - a.puntaje; });
+
+    // Sin coincidencias
+    if (resultados.length === 0) {
+      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Sin coincidencia</span><div><div class="fase-title">No encontramos una causal exacta</div><div class="fase-subtitle">Usa los atajos de abajo para ir a una causal</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Respuesta universal</div><div class="msg-text" id="msg-univ"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
+      var univ = document.getElementById('msg-univ');
+      if (univ) univ.textContent = '"Hola [Nombre], muchas gracias por contactarnos. Queremos entender bien tu situación para ayudarte de la mejor manera. ¿Podrías contarme un poco más sobre lo que está pasando?"';
+      return;
+    }
+
+    var mejor = resultados[0];
+    var segundo = (resultados[1] && resultados[1].puntaje >= mejor.puntaje * 0.7) ? resultados[1] : null;
+    var confianza = mejor.puntaje >= 30 ? '🟢 Alta' : mejor.puntaje >= 15 ? '🟡 Media' : '🔴 Baja';
+    var frasesCoinc = mejor.coincidencias.slice(0, 3).map(function(c) { return '"' + c.texto + '"'; }).join(', ');
+
+    // Causal personalizada
+    if (mejor.causal.esCustom) {
+      res.innerHTML = '<div class="fase"><div class="fase-header"><span class="fase-badge f2">' + mejor.causal.emoji + ' ' + mejor.causal.nombre + '</span><div><div class="fase-title">Causal personalizada</div><div class="fase-subtitle">Confianza: ' + confianza + ' · Puntaje: ' + mejor.puntaje + '</div></div></div><div class="msg empatia"><div class="msg-label azul">💙 Empatía</div><div class="msg-text" id="res-ec"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div><div class="msg propuesta"><div class="msg-label verde">💚 Propuesta</div><div class="msg-text" id="res-pc"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>';
+      var ec = document.getElementById('res-ec');
+      var pc = document.getElementById('res-pc');
+      if (ec) ec.textContent = '"' + mejor.causal.f1.h + '"';
+      if (pc) pc.textContent = '"' + mejor.causal.f3.disminucion1 + '"';
+      return;
+    }
+
+    var d = mejor.causal;
+    var alertaSegunda = (segundo && !segundo.causal.esCustom) ?
+      '<div class="alert amarillo" style="margin-bottom:8px;"><strong>🤔 También podría ser:</strong> ' + segundo.causal.emoji + ' ' + segundo.causal.nombre + ' (puntaje: ' + segundo.puntaje + ') — <span style="cursor:pointer;color:var(--azul-oscuro);font-weight:700;" onclick="irA(\'' + segundo.causal.id + '\')">Ver ese guion →</span></div>' : '';
+
+    res.innerHTML = '<div class="alert verde" style="margin-bottom:8px;"><strong>✅ Causal detectada: ' + d.emoji + ' ' + d.nombre + '</strong><br><span style="font-size:11px;">Confianza: ' + confianza + ' · Puntaje: ' + mejor.puntaje + ' · Coincidencias: ' + frasesCoinc + '</span></div>' +
+      alertaSegunda +
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f1">Fase 1</span><div><div class="fase-title">Empatía</div></div></div>' +
+      '<div class="msg empatia"><div class="msg-label azul">💙 Para hombre</div><div class="msg-text" id="r-f1h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
+      '<div class="msg empatia" style="margin-top:6px;"><div class="msg-label azul">💙 Para mujer</div><div class="msg-text" id="r-f1m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f2">Fase 2</span><div><div class="fase-title">Sensibilización</div></div></div>' +
+      '<div class="msg sensi"><div class="msg-label lila">💜 Para hombre</div><div class="msg-text" id="r-f2h"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
+      '<div class="msg sensi" style="margin-top:6px;"><div class="msg-label lila">💜 Para mujer</div><div class="msg-text" id="r-f2m"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
+      '<div class="fase"><div class="fase-header"><span class="fase-badge f3">Fase 3</span><div><div class="fase-title">Propuesta</div></div></div>' +
+      '<div class="msg propuesta"><div class="msg-label verde">💚 Disminución 1</div><div class="msg-text" id="r-d1"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
+      '<div class="msg propuesta" style="margin-top:6px;"><div class="msg-label verde">💚 Disminución 2</div><div class="msg-text" id="r-d2"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div>' +
+      '<div class="msg cierre" style="margin-top:6px;"><div class="msg-label rojo">❤️ Cierre</div><div class="msg-text" id="r-cierre"></div><button class="copy-btn" onclick="copiarMsg(this)">📋 Copiar</button></div></div>' +
+      '<button class="search-btn" style="margin-top:4px;" onclick="irA(\'' + d.id + '\')">📖 Ver guion completo →</button>';
+
+    var setTC = function(id, val) {
+      var e = document.getElementById(id);
+      if (e && val) e.textContent = '"' + val + '"';
+    };
+    setTC('r-f1h', d.f1.h);
+    setTC('r-f1m', d.f1.m);
+    setTC('r-f2h', d.f2.h);
+    setTC('r-f2m', d.f2.m);
+    setTC('r-d1',  d.f3.disminucion1);
+    setTC('r-d2',  d.f3.disminucion2);
+    setTC('r-cierre', d.f3.cierre);
+
+  } catch(err) {
+    console.error('Error en buscar():', err);
+    var res2 = document.getElementById('resultado');
+    if (res2) res2.innerHTML = '<div class="alert amarillo"><strong>⚠️ Ocurrió un error al analizar el mensaje.</strong> Por favor intenta de nuevo.</div>';
+  }
+}
+
+// Análisis automático con debounce 500ms
+var temporizadorBusqueda;
+(function() {
+  var campo = document.getElementById('donor-input');
+  if (campo) {
+    campo.addEventListener('input', function() {
+      clearTimeout(temporizadorBusqueda);
+      var val = this.value ? this.value.trim() : '';
+      if (val.length === 0) {
+        var res = document.getElementById('resultado');
+        if (res) res.innerHTML = '';
+        var bar = document.getElementById('lang-bar');
+        if (bar) bar.classList.remove('visible');
+        return;
+      }
+      temporizadorBusqueda = setTimeout(function() {
+        try { buscar(); } catch(e) { console.error('Auto-detect error:', e); }
+      }, 500);
+    });
+  }
+})();
+
+// ============================================================
+// CAUSALES PERSONALIZADAS
+// ============================================================
+function agregarCausal() {
+  var t = document.getElementById('nt').value.trim();
+  var f = document.getElementById('nf').value.trim();
+  var e = document.getElementById('ne').value.trim();
+  var p = document.getElementById('np').value.trim();
+  var em = document.getElementById('nem').value.trim() || '💬';
+  if (!t || !f || !e || !p) { alert('Por favor completa todos los campos.'); return; }
+  causales.push({ id: Date.now(), title: t, frase: f, empatia: e, propuesta: p, emoji: em });
+  renderCausales();
+  ['nt','nf','ne','np','nem'].forEach(function(id) { var el = document.getElementById(id); if(el) el.value = ''; });
+}
+
+function renderCausales() {
+  var list = document.getElementById('custom-list');
+  var empty = document.getElementById('empty-msg');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!causales.length) { if(empty) empty.style.display = 'block'; return; }
+  if(empty) empty.style.display = 'none';
+  causales.forEach(function(c) {
+    var div = document.createElement('div');
+    div.className = 'custom-card';
+    div.innerHTML = '<h4>' + (c.emoji||'💬') + ' ' + (c.title||'') + '</h4><div class="custom-frase">"' + (c.frase||'') + '"</div><div class="custom-resp"><strong>Empatía:</strong> ' + (c.empatia||'') + '<br><br><strong>Propuesta:</strong> ' + (c.propuesta||'') + '</div><button class="del-btn" onclick="eliminar(' + c.id + ')">🗑 Eliminar</button>';
+    list.appendChild(div);
+  });
+}
+
+function eliminar(id) {
+  causales = causales.filter(function(c) { return c.id !== id; });
+  renderCausales();
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+(function init() {
+  // Render paneles
+  DB.forEach(function(d) { renderPanel(d); });
+  // Contador
+  actualizarContador();
+})();
+
+
+
+</script>
+</body>
+</html>
