@@ -199,6 +199,49 @@ textarea.form-input{min-height:70px;resize:vertical;}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A2733;color:white;padding:10px 20px;border-radius:8px;font-size:13px;transition:transform .3s ease;z-index:100;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
+
+/* IA GROQ */
+.ia-box{background:white;border-radius:12px;padding:15px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:12px;}
+.ia-box h3{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.ia-header-badge{background:linear-gradient(135deg,#7C3AED,#8B5CF6);color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.ia-box p{font-size:12px;color:var(--gris);margin-bottom:12px;line-height:1.5;}
+.ia-key-row{display:flex;gap:8px;margin-bottom:12px;align-items:center;}
+.ia-key-input{flex:1;border:1.5px solid #DCE8F0;border-radius:8px;padding:8px 12px;font-size:12px;font-family:'Inter',sans-serif;color:var(--texto);}
+.ia-key-input:focus{outline:none;border-color:#8B5CF6;}
+.ia-key-btn{background:#8B5CF6;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+.ia-key-btn:hover{background:#7C3AED;}
+.ia-key-status{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:600;}
+.ia-key-status.ok{background:var(--verde-claro);color:var(--verde);}
+.ia-key-status.no{background:var(--rojo-claro);color:var(--rojo);}
+.ia-chat{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.ia-msg-user{background:var(--azul-fondo);border-radius:10px;padding:10px 13px;border-left:3px solid var(--azul);}
+.ia-msg-user .ia-msg-label{font-size:10px;font-weight:700;color:var(--azul-oscuro);margin-bottom:4px;}
+.ia-msg-ai{background:var(--lila-claro);border-radius:10px;padding:10px 13px;border-left:3px solid #8B5CF6;}
+.ia-msg-ai .ia-msg-label{font-size:10px;font-weight:700;color:#6D28D9;margin-bottom:4px;}
+.ia-msg-text{font-size:12.5px;line-height:1.6;color:var(--texto);white-space:pre-wrap;}
+.ia-siguiente{background:var(--gris-claro);border-radius:12px;padding:14px;margin-top:12px;}
+.ia-siguiente h4{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--texto);}
+.ia-input-area{border:1.5px solid #DCE8F0;border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--texto);width:100%;min-height:80px;resize:vertical;transition:border .2s;}
+.ia-input-area:focus{outline:none;border-color:#8B5CF6;}
+.ia-btns{display:flex;gap:8px;margin-top:8px;}
+.ia-btn-primary{flex:1;background:#8B5CF6;color:white;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.ia-btn-primary:hover{background:#7C3AED;}
+.ia-btn-primary:disabled{background:#C4B5FD;cursor:not-allowed;}
+.ia-btn-secondary{background:var(--gris-claro);color:var(--gris);border:1px solid #DCE8F0;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.ia-btn-secondary:hover{border-color:var(--rojo);color:var(--rojo);}
+.ia-loading{display:flex;align-items:center;gap:8px;font-size:12px;color:#8B5CF6;padding:10px;}
+.ia-dot{width:6px;height:6px;border-radius:50%;background:#8B5CF6;animation:iabounce .8s infinite;}
+.ia-dot:nth-child(2){animation-delay:.15s;}
+.ia-dot:nth-child(3){animation-delay:.3s;}
+@keyframes iabounce{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+.ia-causal-detectada{background:linear-gradient(135deg,#7C3AED11,#8B5CF622);border:1.5px solid #8B5CF6;border-radius:10px;padding:10px 13px;margin-bottom:10px;}
+.ia-causal-detectada .ia-c-label{font-size:10px;font-weight:700;color:#6D28D9;margin-bottom:3px;}
+.ia-causal-detectada .ia-c-val{font-size:13px;font-weight:700;color:var(--texto);}
+.ia-tip{font-size:11px;color:var(--gris);font-style:italic;margin-top:6px;line-height:1.5;}
+.ia-no-key{text-align:center;padding:20px;color:var(--gris);}
+.ia-no-key .ia-lock{font-size:32px;margin-bottom:8px;}
+.ia-no-key p{font-size:12px;line-height:1.6;}
+
 </style>
 </head>
 <body>
@@ -250,6 +293,7 @@ textarea.form-input{min-height:70px;resize:vertical;}
   <button class="tab" onclick="showPanel('otraorg',this)">🔄 Otra organización</button>
   <button class="tab" onclick="showPanel('agregar',this)">➕ Agregar causal</button>
   <button class="tab" onclick="showPanel('tips',this)">💡 Tips & Libros</button>
+  <button class="tab" onclick="showPanel('ia',this)">🤖 IA Groq</button>
 </div>
 
 <div class="content">
@@ -288,6 +332,58 @@ textarea.form-input{min-height:70px;resize:vertical;}
 <div id="panel-agotamiento" class="panel"></div>
 <div id="panel-noreconoce" class="panel"></div>
 <div id="panel-otraorg" class="panel"></div>
+
+
+<!-- IA GROQ -->
+<div id="panel-ia" class="panel">
+  <div class="ia-box">
+    <h3>🤖 Asistente IA <span class="ia-header-badge">Groq · Gratis</span></h3>
+    <p>La IA analiza el mensaje del donante, detecta la causal y sugiere el guion. Si el donante rechaza, pega su respuesta y la IA sugiere el siguiente paso.</p>
+
+    <div class="ia-key-row">
+      <input type="password" class="ia-key-input" id="ia-key-input" placeholder="Pega aquí tu API key de Groq (gsk_...)">
+      <button class="ia-key-btn" onclick="guardarKey()">💾 Guardar</button>
+    </div>
+    <div id="ia-key-status"></div>
+    <p class="ia-tip">💡 Tu key se guarda solo en este navegador. Nadie más puede verla. Créala gratis en <strong>console.groq.com → API Keys</strong></p>
+  </div>
+
+  <div id="ia-main">
+    <div class="ia-no-key" id="ia-sin-key">
+      <div class="ia-lock">🔑</div>
+      <p>Ingresa tu API key de Groq arriba para activar el asistente de IA.</p>
+    </div>
+
+    <div id="ia-con-key" style="display:none;">
+      <div class="ia-box">
+        <h3>💬 Mensaje del donante</h3>
+        <textarea class="ia-input-area" id="ia-msg-donante" placeholder="Pega aquí el mensaje del donante por WhatsApp o chat..."></textarea>
+        <div class="ia-btns">
+          <button class="ia-btn-primary" id="ia-btn-analizar" onclick="iaAnalizar()">🔍 Analizar con IA</button>
+          <button class="ia-btn-secondary" onclick="iaReset()">🗑 Nueva conversación</button>
+        </div>
+      </div>
+
+      <div id="ia-chat-container" style="display:none;">
+        <div id="ia-causal-box" class="ia-causal-detectada" style="display:none;">
+          <div class="ia-c-label">✅ Causal detectada por IA</div>
+          <div class="ia-c-val" id="ia-causal-val"></div>
+        </div>
+
+        <div class="ia-chat" id="ia-chat"></div>
+
+        <div class="ia-siguiente" id="ia-siguiente" style="display:none;">
+          <h4>💬 El donante respondió... ¿qué dijo?</h4>
+          <textarea class="ia-input-area" id="ia-resp-donante" placeholder="Pega aquí la respuesta del donante (ej: 'no, sigue siendo mucho' / 'lo pensaré' / 'ok acepto reducir')..."></textarea>
+          <div class="ia-btns">
+            <button class="ia-btn-primary" id="ia-btn-continuar" onclick="iaContinuar()">➡️ Sugerir siguiente paso</button>
+          </div>
+          <p class="ia-tip">La IA analizará la respuesta del donante y sugerirá el guion más adecuado según el contexto completo de la conversación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- AGREGAR CAUSAL -->
 <div id="panel-agregar" class="panel">
@@ -1365,35 +1461,185 @@ function eliminar(id) {
 })();
 
 
+// ============================================================
+// MÓDULO IA — GROQ
+// ============================================================
+var iaConversacion = [];
+var iaKeyGuardada = '';
 
-        // Mensajes reales — decisión firme
-        'tome una decision',
-        'tomé una decisión',
-        'ya tome una decision',
-        'ya tomé una decisión',
-        'mi decision no va a cambiar',
-        'mi decisión no va a cambiar',
-        'sin importar el monto',
-        'aunque el monto sea menor',
-        'decision tomada',
-        'decisión tomada',
-        'ya decidi',
-        'ya decidí',
-        'es definitivo',
-        'no voy a cambiar de opinion',
-        'no voy a cambiar de opinión',
-        'no me van a convencer',
-        'yo misma los buscare',
-        'yo misma los buscaré',
-        'cuando pueda yo los busco',
-        'cuando lo desee los contacto',
-        'no quiero que me llamen',
-        'no me llamen',
-        'no me contacten',
-        'eso es todo lo que puedo hacer',
-        'lo siento no puedo mas',
-        'lo siento no puedo más',
-        'es todo lo que puedo'
+function guardarKey() {
+  var v = document.getElementById('ia-key-input').value.trim();
+  if (!v || !v.startsWith('gsk_')) {
+    mostrarEstadoKey('❌ La key debe empezar con gsk_', false);
+    return;
+  }
+  try { localStorage.setItem('groq_api_key', v); } catch(e) {}
+  iaKeyGuardada = v;
+  mostrarEstadoKey('✅ API key guardada', true);
+  document.getElementById('ia-sin-key').style.display = 'none';
+  document.getElementById('ia-con-key').style.display = '';
+}
+
+function mostrarEstadoKey(msg, ok) {
+  var el = document.getElementById('ia-key-status');
+  el.className = 'ia-key-status ' + (ok ? 'ok' : 'no');
+  el.textContent = msg;
+}
+
+function iaCargarKey() {
+  var k = '';
+  try { k = localStorage.getItem('groq_api_key') || ''; } catch(e) {}
+  if (k && k.startsWith('gsk_')) {
+    iaKeyGuardada = k;
+    document.getElementById('ia-key-input').value = k;
+    mostrarEstadoKey('✅ API key cargada', true);
+    document.getElementById('ia-sin-key').style.display = 'none';
+    document.getElementById('ia-con-key').style.display = '';
+  }
+}
+
+function iaGetKey() {
+  if (iaKeyGuardada) return iaKeyGuardada;
+  var k = '';
+  try { k = localStorage.getItem('groq_api_key') || ''; } catch(e) {}
+  return k;
+}
+
+function iaReset() {
+  iaConversacion = [];
+  document.getElementById('ia-chat').innerHTML = '';
+  document.getElementById('ia-chat-container').style.display = 'none';
+  document.getElementById('ia-siguiente').style.display = 'none';
+  document.getElementById('ia-causal-box').style.display = 'none';
+  document.getElementById('ia-msg-donante').value = '';
+  var r = document.getElementById('ia-resp-donante');
+  if (r) r.value = '';
+}
+
+function iaAgregarMensaje(quien, texto) {
+  var chat = document.getElementById('ia-chat');
+  var div = document.createElement('div');
+  div.className = quien === 'donante' ? 'ia-msg-user' : 'ia-msg-ai';
+  var label = document.createElement('div');
+  label.className = 'ia-msg-label';
+  label.textContent = quien === 'donante' ? '💬 Donante' : '🤖 Asistente IA';
+  var textDiv = document.createElement('div');
+  textDiv.className = 'ia-msg-text';
+  textDiv.textContent = texto;
+  div.appendChild(label);
+  div.appendChild(textDiv);
+  chat.appendChild(div);
+  document.getElementById('ia-chat-container').style.display = '';
+}
+
+function iaLoading(mostrar) {
+  var chat = document.getElementById('ia-chat');
+  var existing = document.getElementById('ia-loader');
+  if (existing) existing.remove();
+  if (mostrar) {
+    var d = document.createElement('div');
+    d.id = 'ia-loader';
+    d.className = 'ia-loading';
+    d.innerHTML = '<div class="ia-dot"></div><div class="ia-dot"></div><div class="ia-dot"></div><span>Analizando con IA...</span>';
+    chat.appendChild(d);
+  }
+}
+
+var SISTEMA_PROMPT = 'Eres un asistente de retencion de donantes de UNICEF Colombia. Analiza el mensaje del donante y detecta la causal de cancelacion. Causales: 1-DESEMPLEO: perdio trabajo, proponer reduccion de monto. 2-DIFICULTAD ECONOMICA: gastos altos o sin dinero, proponer reduccion. 3-VIAJE EXTERIOR: se va del pais, ofrecer pausa o banco internacional. 4-UNICA VEZ: creia que era pago unico, aclarar que es mensual y proponer reduccion. 5-AGOTAMIENTO: ya no puede mas o cansancio, proponer pausa temporal. 6-NO RECONOCE COBRO: no recuerda haber donado, verificar datos sin acusar. 7-OTRA ORGANIZACION: prefiere apoyar otra ONG, mostrar diferencial UNICEF. Responde SIEMPRE en espanol. Formato exacto: CAUSAL DETECTADA: [nombre de la causal]. GUION SUGERIDO: [texto exacto que el asesor debe decir al donante]. PROXIMO PASO SI RECHAZA: [siguiente accion recomendada]. Si la conversacion continua, analiza el contexto completo y sugiere la respuesta mas adecuada para retener al donante.';
+
+function iaLlamarGroq(mensajes, callback) {
+  var key = iaGetKey();
+  if (!key) { alert('Primero guarda tu API key de Groq'); return; }
+  fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + key
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-20b',
+      messages: mensajes,
+      max_tokens: 800,
+      temperature: 0.3
+    })
+  })
+  .then(function(r) {
+    if (!r.ok) {
+      return r.json().then(function(e) {
+        throw new Error((e.error && e.error.message) || 'Error HTTP ' + r.status);
+      });
+    }
+    return r.json();
+  })
+  .then(function(data) {
+    var texto = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!texto) throw new Error('Respuesta vacia de Groq');
+    callback(null, texto);
+  })
+  .catch(function(err) {
+    callback(err.message || 'Error desconocido', null);
+  });
+}
+
+function iaAnalizar() {
+  var msg = document.getElementById('ia-msg-donante').value.trim();
+  if (!msg) { alert('Pega el mensaje del donante primero'); return; }
+  var btn = document.getElementById('ia-btn-analizar');
+  btn.disabled = true;
+  btn.textContent = 'Analizando...';
+  iaReset();
+  iaAgregarMensaje('donante', msg);
+  iaLoading(true);
+  iaConversacion = [
+    { role: 'system', content: SISTEMA_PROMPT },
+    { role: 'user', content: 'Mensaje del donante: ' + msg }
+  ];
+  iaLlamarGroq(iaConversacion, function(err, respuesta) {
+    iaLoading(false);
+    btn.disabled = false;
+    btn.textContent = '🔍 Analizar con IA';
+    if (err) {
+      iaAgregarMensaje('ia', 'Error: ' + err + ' — Verifica tu API key de Groq.');
+      return;
+    }
+    iaConversacion.push({ role: 'assistant', content: respuesta });
+    var causalMatch = respuesta.match(/CAUSAL DETECTADA[^:]*:\s*([^\n]+)/i);
+    if (causalMatch) {
+      document.getElementById('ia-causal-val').textContent = causalMatch[1].trim();
+      document.getElementById('ia-causal-box').style.display = '';
+    }
+    iaAgregarMensaje('ia', respuesta);
+    document.getElementById('ia-siguiente').style.display = '';
+  });
+}
+
+function iaContinuar() {
+  var resp = document.getElementById('ia-resp-donante').value.trim();
+  if (!resp) { alert('Pega la respuesta del donante'); return; }
+  var btn = document.getElementById('ia-btn-continuar');
+  btn.disabled = true;
+  btn.textContent = 'Procesando...';
+  iaAgregarMensaje('donante', resp);
+  iaLoading(true);
+  iaConversacion.push({
+    role: 'user',
+    content: 'El donante respondio: ' + resp + '. Sugiere el siguiente paso.'
+  });
+  iaLlamarGroq(iaConversacion, function(err, respuesta) {
+    iaLoading(false);
+    btn.disabled = false;
+    btn.textContent = '➡️ Sugerir siguiente paso';
+    document.getElementById('ia-resp-donante').value = '';
+    if (err) {
+      iaAgregarMensaje('ia', 'Error al continuar: ' + err);
+      return;
+    }
+    iaConversacion.push({ role: 'assistant', content: respuesta });
+    iaAgregarMensaje('ia', respuesta);
+  });
+}
+
+(function() { iaCargarKey(); })();
 </script>
 </body>
 </html>
